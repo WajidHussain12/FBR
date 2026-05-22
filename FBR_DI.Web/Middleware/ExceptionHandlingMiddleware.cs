@@ -7,16 +7,19 @@ public class ExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+    private readonly IConfiguration _configuration;
 
     private static readonly JsonSerializerOptions _jsonOptions =
         new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
     public ExceptionHandlingMiddleware(
         RequestDelegate next,
-        ILogger<ExceptionHandlingMiddleware> logger)
+        ILogger<ExceptionHandlingMiddleware> logger,
+        IConfiguration configuration)
     {
-        _next   = next;
+        _next = next;
         _logger = logger;
+        _configuration = configuration;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -33,7 +36,7 @@ public class ExceptionHandlingMiddleware
 
             if (IsAjax(context))
             {
-                context.Response.StatusCode  = StatusCodes.Status400BadRequest;
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsync(
                     JsonSerializer.Serialize(
@@ -42,7 +45,7 @@ public class ExceptionHandlingMiddleware
             else
             {
                 context.Items["ValidationErrors"] = ex.Errors;
-                context.Response.Redirect("/Admin/Dashboard/Index");
+                RedirectToDashboard(context);
             }
         }
         catch (NotFoundException ex)
@@ -51,7 +54,7 @@ public class ExceptionHandlingMiddleware
 
             if (IsAjax(context))
             {
-                context.Response.StatusCode  = StatusCodes.Status404NotFound;
+                context.Response.StatusCode = StatusCodes.Status404NotFound;
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsync(
                     JsonSerializer.Serialize(
@@ -60,7 +63,7 @@ public class ExceptionHandlingMiddleware
             else
             {
                 context.Response.StatusCode = StatusCodes.Status404NotFound;
-                context.Response.Redirect("/Admin/Dashboard/Index");
+                RedirectToDashboard(context);
             }
         }
         catch (Exception ex)
@@ -69,7 +72,7 @@ public class ExceptionHandlingMiddleware
 
             if (IsAjax(context))
             {
-                context.Response.StatusCode  = StatusCodes.Status500InternalServerError;
+                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsync(
                     JsonSerializer.Serialize(
@@ -79,9 +82,34 @@ public class ExceptionHandlingMiddleware
             else
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                context.Response.Redirect("/Admin/Dashboard/Index");
+                RedirectToDashboard(context);
             }
         }
+    }
+
+    private void RedirectToDashboard(HttpContext context)
+    {
+        var pathBase = GetEffectivePathBase(context);
+        context.Response.Redirect($"{pathBase}/Admin/Dashboard/Index");
+    }
+
+    private string GetEffectivePathBase(HttpContext context)
+    {
+        var requestPathBase = context.Request.PathBase.HasValue
+            ? context.Request.PathBase.Value
+            : string.Empty;
+        var configuredPathBase = _configuration["PathBase"] ?? string.Empty;
+
+        var pathBase = !string.IsNullOrWhiteSpace(requestPathBase)
+            ? requestPathBase
+            : configuredPathBase;
+
+        if (string.IsNullOrWhiteSpace(pathBase))
+            return string.Empty;
+
+        pathBase = pathBase.Trim();
+        pathBase = pathBase.StartsWith('/') ? pathBase : "/" + pathBase;
+        return pathBase.TrimEnd('/');
     }
 
     private static bool IsAjax(HttpContext context) =>
