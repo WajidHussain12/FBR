@@ -45,7 +45,7 @@ public class ExceptionHandlingMiddleware
             else
             {
                 context.Items["ValidationErrors"] = ex.Errors;
-                RedirectToDashboard(context);
+                RedirectToErrorPage(context);
             }
         }
         catch (NotFoundException ex)
@@ -62,8 +62,7 @@ public class ExceptionHandlingMiddleware
             }
             else
             {
-                context.Response.StatusCode = StatusCodes.Status404NotFound;
-                RedirectToDashboard(context);
+                RedirectToErrorPage(context);
             }
         }
         catch (Exception ex)
@@ -81,16 +80,24 @@ public class ExceptionHandlingMiddleware
             }
             else
             {
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                RedirectToDashboard(context);
+                RedirectToErrorPage(context);
             }
         }
     }
 
-    private void RedirectToDashboard(HttpContext context)
+    private void RedirectToErrorPage(HttpContext context)
     {
         var pathBase = GetEffectivePathBase(context);
-        context.Response.Redirect($"{pathBase}/Admin/Dashboard/Index");
+        var errorUrl = $"{pathBase}/Home/Error";
+
+        _logger.LogInformation(
+            "[Error] Redirect decision — Request.PathBase='{RequestPathBase}' Configured.PathBase='{ConfiguredPathBase}' Effective.PathBase='{EffectivePathBase}' FinalRedirectUrl='{FinalRedirectUrl}'",
+            context.Request.PathBase.HasValue ? context.Request.PathBase.Value : string.Empty,
+            _configuration["PathBase"] ?? string.Empty,
+            pathBase,
+            errorUrl);
+
+        context.Response.Redirect(errorUrl);
     }
 
     private string GetEffectivePathBase(HttpContext context)
