@@ -20,7 +20,7 @@
 {
     <div class="bg-yellow-400 text-yellow-900 text-xs font-semibold py-1.5 px-4 flex-shrink-0 flex items-center justify-center gap-3 flex-wrap">
         <span><i class="fa fa-flask mr-1"></i>DEMO MODE &mdash; Mock FBR API Active. Real submissions are simulated.</span>
-        <a href="/Admin/Settings/Index"
+        <a asp-area="Admin" asp-controller="Settings" asp-action="Index"
            class="inline-flex items-center gap-1 bg-yellow-600 text-white px-2.5 py-0.5 rounded-full text-xs font-bold hover:bg-yellow-700 transition-colors whitespace-nowrap">
             <i class="fa fa-arrow-right text-xs"></i> Configure Live API
         </a>
@@ -44,13 +44,13 @@
 
     <!-- Navigation -->
     <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        <a href="/Admin/Dashboard/Index"
+        <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"
            class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")">
             <i class="fa fa-gauge w-5 text-center"></i>
             <span>Dashboard</span>
         </a>
 
-        <a href="/Admin/Company/Index"
+        <a asp-area="Admin" asp-controller="Company" asp-action="Index"
            class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Company" ? "active" : "")">
             <i class="fa fa-building w-5 text-center"></i>
             <span>Companies</span>
@@ -67,12 +67,12 @@
                 <i class="fa fa-chevron-down text-xs transition-transform" :class="{ 'rotate-180': open }"></i>
             </button>
             <div x-show="open" class="ml-8 mt-1 space-y-1">
-                <a href="/Admin/Invoice/Index" class="sidebar-link text-sm py-1.5">All Invoices</a>
-                <a href="/Admin/Invoice/Create" class="sidebar-link text-sm py-1.5">Create Invoice</a>
+                <a asp-area="Admin" asp-controller="Invoice" asp-action="Index" class="sidebar-link text-sm py-1.5">All Invoices</a>
+                <a asp-area="Admin" asp-controller="Invoice" asp-action="Create" class="sidebar-link text-sm py-1.5">Create Invoice</a>
             </div>
         </div>
 
-        <a href="/Admin/ReferenceData/Index"
+        <a asp-area="Admin" asp-controller="ReferenceData" asp-action="Index"
            class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ReferenceData" ? "active" : "")">
             <i class="fa fa-database w-5 text-center"></i>
             <span>Reference Data</span>
@@ -80,17 +80,17 @@
 
         @if (User.IsInRole("Admin"))
         {
-            <a href="/Admin/Setup/Database"
+            <a asp-area="Admin" asp-controller="Setup" asp-action="Database"
                class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Setup" ? "active" : "")">
                 <i class="fa fa-server w-5 text-center"></i>
                 <span>Database Setup</span>
             </a>
-            <a href="/Admin/Settings/Index"
+            <a asp-area="Admin" asp-controller="Settings" asp-action="Index"
                class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Settings" ? "active" : "")">
                 <i class="fa fa-gear w-5 text-center"></i>
                 <span>Settings</span>
             </a>
-            <a href="/Admin/UserManagement/Index"
+            <a asp-area="Admin" asp-controller="UserManagement" asp-action="Index"
                class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "UserManagement" ? "active" : "")">
                 <i class="fa fa-users w-5 text-center"></i>
                 <span>User Management</span>
@@ -139,7 +139,7 @@
                     <div id="apiModeDropdown" class="hidden absolute right-0 top-full mt-2 w-60 bg-white rounded-xl shadow-xl border border-gray-200 p-4 z-50">
                         <p class="text-xs font-semibold text-gray-800 mb-1"><i class="fa fa-flask text-yellow-500 mr-1"></i>Mock Mode Active</p>
                         <p class="text-xs text-gray-500 mb-3">No real FBR calls are made. 80% succeed, 20% fail to simulate the real API.</p>
-                        <a href="/Admin/Settings/Index"
+                        <a asp-area="Admin" asp-controller="Settings" asp-action="Index"
                            class="flex items-center justify-center gap-2 w-full bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-colors">
                             <i class="fa fa-plug"></i> Switch to Live FBR API
                         </a>
@@ -225,7 +225,7 @@
     async function layoutSwitchToMock() {
         const csrf = document.querySelector('#layoutMockForm [name="__RequestVerificationToken"]')?.value ?? '';
         try {
-            const resp = await fetch('/Admin/Settings/SwitchToMockApi', {
+            const resp = await fetch('@Url.Action("SwitchToMockApi", "Settings", new { area = "Admin" })', {
                 method: 'POST', headers: { 'RequestVerificationToken': csrf }
             });
             const data = await resp.json();
