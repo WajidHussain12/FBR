@@ -4,6 +4,7 @@ using FBR_DI.Persistence;
 using FBR_DI.Persistence.Context;
 using FBR_DI.Persistence.Seed;
 using FBR_DI.Web.Middleware;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -38,9 +39,15 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+ApplyConfiguredPathBase(app);
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-//app.UseHttpsRedirection();
+if (app.Configuration.GetValue<bool>("UseHttpsRedirection"))
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
@@ -59,6 +66,34 @@ app.MapControllerRoute(
 app.Run();
 
 // ─────────────────────────────────────────────────────────────────────────────
+static void ApplyConfiguredPathBase(WebApplication app)
+{
+    var configuredPathBase = app.Configuration["PathBase"];
+
+    if (string.IsNullOrWhiteSpace(configuredPathBase))
+        return;
+
+    configuredPathBase = configuredPathBase.Trim();
+    configuredPathBase = configuredPathBase.StartsWith('/') ? configuredPathBase : "/" + configuredPathBase;
+    configuredPathBase = configuredPathBase.TrimEnd('/');
+
+    var pathBase = new PathString(configuredPathBase);
+
+    app.Use((context, next) =>
+    {
+        if (context.Request.PathBase.HasValue)
+            return next(context);
+
+        if (context.Request.Path.StartsWithSegments(pathBase, out var remainingPath))
+        {
+            context.Request.PathBase = pathBase;
+            context.Request.Path = remainingPath.HasValue ? remainingPath : PathString.Empty;
+        }
+
+        return next(context);
+    });
+}
+
 static async Task InitializeDatabaseAsync(WebApplication app)
 {
     using var scope = app.Services.CreateScope();
