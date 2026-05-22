@@ -1,4 +1,6 @@
+using FBR_DI.Web.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace FBR_DI.Web.Controllers
 {
@@ -24,7 +26,15 @@ namespace FBR_DI.Web.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+            _logger.LogWarning("[Home] Error page rendered — RequestId='{RequestId}' PathBase='{PathBase}' Path='{Path}'",
+                Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+                Request.PathBase.HasValue ? Request.PathBase.Value : string.Empty,
+                Request.Path.Value ?? string.Empty);
+
+            return View(new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            });
         }
     }
 }
