@@ -1,0 +1,16 @@
+/* Custom overrides not covered by Tailwind utilities */
+
+a.navbar-brand[b-9bpzc9y1q2] {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+a[b-9bpzc9y1q2] {
+  color: #0077cc;
+}
+
+button.accept-policy[b-9bpzc9y1q2] {
+  font-size: 1rem;
+  line-height: inherit;
+}

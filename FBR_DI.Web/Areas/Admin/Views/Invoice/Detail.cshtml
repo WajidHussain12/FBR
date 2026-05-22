@@ -1,0 +1,187 @@
+@model InvoiceDetailDto
+@{
+    ViewData["Title"] = "Invoice Detail";
+    var statusClass = Model.Status switch {
+        InvoiceStatus.Valid => "bg-green-50 border-green-200 text-green-800",
+        InvoiceStatus.Invalid => "bg-red-50 border-red-200 text-red-800",
+        InvoiceStatus.Draft => "bg-gray-50 border-gray-200 text-gray-700",
+        InvoiceStatus.PendingSubmission => "bg-yellow-50 border-yellow-200 text-yellow-800",
+        _ => "bg-orange-50 border-orange-200 text-orange-800"
+    };
+}
+
+<div class="max-w-5xl space-y-5">
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <a href="/Admin/Invoice/Index" class="text-gray-400 hover:text-gray-600"><i class="fa fa-arrow-left"></i></a>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Invoice #@Model.Id</h1>
+                <p class="text-sm text-gray-500 mt-0.5">@Model.CompanyName</p>
+            </div>
+        </div>
+        <div class="flex gap-2">
+            @if (Model.Status == InvoiceStatus.Draft || Model.Status == InvoiceStatus.Invalid)
+            {
+                <button onclick="submitInvoice(@Model.Id)" class="btn-primary">
+                    <i class="fa fa-paper-plane mr-2"></i>Submit to FBR
+                </button>
+                <button onclick="validateInvoice(@Model.Id)" class="btn-warning">
+                    <i class="fa fa-check mr-2"></i>Validate
+                </button>
+            }
+            @if (Model.Status == InvoiceStatus.Draft)
+            {
+                <a href="/Admin/Invoice/Edit/@Model.Id" class="btn-secondary">
+                    <i class="fa fa-edit mr-2"></i>Edit
+                </a>
+            }
+            <a href="/Admin/Invoice/PrintInvoice/@Model.Id" target="_blank" class="btn-secondary">
+                <i class="fa fa-print mr-2"></i>Print
+            </a>
+        </div>
+    </div>
+
+    <!-- Status Card -->
+    <div class="border rounded-xl p-4 @statusClass">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i class="fa @(Model.Status == InvoiceStatus.Valid ? "fa-check-circle" : Model.Status == InvoiceStatus.Invalid ? "fa-times-circle" : "fa-clock") text-xl"></i>
+                <div>
+                    <div class="font-semibold">@Model.Status</div>
+                    @if (!string.IsNullOrEmpty(Model.FbrInvoiceNumber))
+                    {
+                        <div class="text-sm">FBR Invoice: <strong>@Model.FbrInvoiceNumber</strong></div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.FbrErrorMessage))
+                    {
+                        <div class="text-sm">Error: @Model.FbrErrorMessage</div>
+                    }
+                </div>
+            </div>
+            @if (Model.FbrSubmissionDate.HasValue)
+            {
+                <div class="text-sm">Submitted: @Model.FbrSubmissionDate.Value.ToString("dd MMM yyyy HH:mm")</div>
+            }
+        </div>
+    </div>
+
+    <!-- QR Code (if available) -->
+    @if (!string.IsNullOrEmpty(Model.QrCodeBase64))
+    {
+        <div class="card flex items-center gap-6">
+            <img src="data:image/png;base64,@Model.QrCodeBase64" alt="QR Code" class="w-32 h-32" />
+            <div>
+                <div class="font-semibold text-gray-900">FBR QR Code</div>
+                <div class="text-sm text-gray-500 mt-1">Scan to verify invoice authenticity</div>
+                <div class="text-sm font-mono text-gray-700 mt-2">@Model.FbrInvoiceNumber</div>
+            </div>
+        </div>
+    }
+
+    <!-- Invoice Header -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="card space-y-3">
+            <h3 class="font-semibold text-gray-900 border-b border-gray-100 pb-2">Seller Information</h3>
+            <div class="text-sm space-y-1">
+                <div><span class="text-gray-500">Name:</span> <span class="font-medium">@Model.SellerBusinessName</span></div>
+                <div><span class="text-gray-500">NTN/CNIC:</span> <span>@Model.SellerNTNCNIC</span></div>
+                <div><span class="text-gray-500">Province:</span> <span>@Model.SellerProvince</span></div>
+                <div><span class="text-gray-500">Address:</span> <span>@Model.SellerAddress</span></div>
+            </div>
+        </div>
+        <div class="card space-y-3">
+            <h3 class="font-semibold text-gray-900 border-b border-gray-100 pb-2">Buyer Information</h3>
+            <div class="text-sm space-y-1">
+                <div><span class="text-gray-500">Name:</span> <span class="font-medium">@Model.BuyerBusinessName</span></div>
+                @if (!string.IsNullOrEmpty(Model.BuyerNTNCNIC))
+                {
+                    <div><span class="text-gray-500">NTN/CNIC:</span> <span>@Model.BuyerNTNCNIC</span></div>
+                }
+                <div><span class="text-gray-500">Type:</span> <span>@Model.BuyerRegistrationType</span></div>
+                <div><span class="text-gray-500">Province:</span> <span>@Model.BuyerProvince</span></div>
+                <div><span class="text-gray-500">Address:</span> <span>@Model.BuyerAddress</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Items -->
+    <div class="card">
+        <h3 class="font-semibold text-gray-900 border-b border-gray-100 pb-3 mb-4">Invoice Items</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="text-gray-500 text-left border-b">
+                        <th class="pb-2 pr-3">#</th>
+                        <th class="pb-2 pr-3">HS Code</th>
+                        <th class="pb-2 pr-3">Description</th>
+                        <th class="pb-2 pr-3">Qty</th>
+                        <th class="pb-2 pr-3">Value Excl ST</th>
+                        <th class="pb-2 pr-3">Sales Tax</th>
+                        <th class="pb-2 pr-3">Sale Type</th>
+                        <th class="pb-2">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td class="py-2 pr-3 text-gray-400">@item.ItemSerialNo</td>
+                            <td class="py-2 pr-3 font-mono text-xs">@item.HsCode</td>
+                            <td class="py-2 pr-3 max-w-xs truncate">@item.ProductDescription</td>
+                            <td class="py-2 pr-3">@item.Quantity @item.UoM</td>
+                            <td class="py-2 pr-3">@item.ValueSalesExcludingST.ToString("N2")</td>
+                            <td class="py-2 pr-3">@item.SalesTaxApplicable.ToString("N2")</td>
+                            <td class="py-2 pr-3 text-xs max-w-[120px] truncate">@item.SaleType</td>
+                            <td class="py-2">
+                                @if (item.ItemStatus != null)
+                                {
+                                    <span class="@(item.ItemStatus == "Valid" ? "badge-success" : "badge-danger")">@item.ItemStatus</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Totals -->
+    <div class="card">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div><div class="text-xs text-gray-500">Value Excl. ST</div><div class="font-semibold">@Model.TotalValueExclST.ToString("N2")</div></div>
+            <div><div class="text-xs text-gray-500">Sales Tax</div><div class="font-semibold">@Model.TotalSalesTax.ToString("N2")</div></div>
+            <div><div class="text-xs text-gray-500">Further Tax</div><div class="font-semibold">@Model.TotalFurtherTax.ToString("N2")</div></div>
+            <div><div class="text-xs text-gray-500">Extra Tax</div><div class="font-semibold">@Model.TotalExtraTax.ToString("N2")</div></div>
+            <div><div class="text-xs text-gray-500">FED Payable</div><div class="font-semibold">@Model.TotalFedPayable.ToString("N2")</div></div>
+            <div><div class="text-xs text-gray-500">Discount</div><div class="font-semibold text-red-600">-@Model.TotalDiscount.ToString("N2")</div></div>
+        </div>
+        <div class="mt-4 pt-4 border-t border-gray-200 flex items-center justify-between">
+            <span class="text-lg font-semibold text-gray-700">Grand Total</span>
+            <span class="text-3xl font-bold text-gray-900">PKR @Model.GrandTotal.ToString("N2")</span>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function submitInvoice(id) {
+    Swal.fire({ title: 'Submit to FBR?', text: 'This will submit the invoice to FBR.', icon: 'question', showCancelButton: true, confirmButtonText: 'Submit' })
+    .then(r => {
+        if (!r.isConfirmed) return;
+        fetch(`/Admin/Invoice/Submit/${id}`, { method: 'POST', headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').first().val() } })
+        .then(r => r.json()).then(d => {
+            if (d.success) { toastr.success('Invoice submitted successfully! FBR#: ' + (d.invoiceNumber || 'N/A')); location.reload(); }
+            else toastr.error(d.message || d.error || 'Submission failed.');
+        });
+    });
+}
+
+function validateInvoice(id) {
+    fetch(`/Admin/Invoice/Validate/${id}`, { method: 'POST', headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').first().val() } })
+    .then(r => r.json()).then(d => {
+        if (d.success) toastr.success('Validation: ' + (d.status || 'OK'));
+        else toastr.warning(d.message || d.error || 'Validation complete with issues.');
+    });
+}
+</script>
+}

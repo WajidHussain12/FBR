@@ -1,0 +1,11 @@
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Domain\bin\Release\net8.0\FBR_DI.Domain.deps.json
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Domain\bin\Release\net8.0\FBR_DI.Domain.dll
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Domain\bin\Release\net8.0\FBR_DI.Domain.pdb
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Domain\obj\Release\net8.0\FBR_DI.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Domain\obj\Release\net8.0\FBR_DI.Domain.AssemblyInfoInputs.cache
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Domain\obj\Release\net8.0\FBR_DI.Domain.AssemblyInfo.cs
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Domain\obj\Release\net8.0\FBR_DI.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Domain\obj\Release\net8.0\FBR_DI.Domain.dll
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Domain\obj\Release\net8.0\refint\FBR_DI.Domain.dll
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Domain\obj\Release\net8.0\FBR_DI.Domain.pdb
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Domain\obj\Release\net8.0\ref\FBR_DI.Domain.dll

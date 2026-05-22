@@ -1,0 +1,73 @@
+@model List<UserListViewModel>
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<div class="space-y-5">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">User Management</h1>
+            <p class="text-sm text-gray-500 mt-1">Manage system users and roles</p>
+        </div>
+        <a href="/Admin/UserManagement/Create" class="btn-primary">
+            <i class="fa fa-plus mr-2"></i>Add User
+        </a>
+    </div>
+
+    <div class="card">
+        <table id="usersTable" class="w-full text-sm">
+            <thead>
+                <tr class="text-left text-gray-500 border-b border-gray-100">
+                    <th class="pb-3 font-medium pr-4">Name</th>
+                    <th class="pb-3 font-medium pr-4">Email</th>
+                    <th class="pb-3 font-medium pr-4">Role</th>
+                    <th class="pb-3 font-medium pr-4">Status</th>
+                    <th class="pb-3 font-medium pr-4">Created</th>
+                    <th class="pb-3 font-medium">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td class="py-3 pr-4 font-medium text-gray-900">@user.FullName</td>
+                        <td class="py-3 pr-4 text-gray-600">@user.Email</td>
+                        <td class="py-3 pr-4">
+                            <span class="badge-gray">@user.Role</span>
+                        </td>
+                        <td class="py-3 pr-4">
+                            <span class="@(user.IsActive ? "badge-success" : "badge-danger")">
+                                @(user.IsActive ? "Active" : "Inactive")
+                            </span>
+                        </td>
+                        <td class="py-3 pr-4 text-gray-400 text-xs">@user.CreatedAt.ToString("dd MMM yyyy")</td>
+                        <td class="py-3">
+                            <div class="flex gap-2">
+                                <a href="/Admin/UserManagement/Edit/@user.Id"
+                                   class="text-blue-600 hover:text-blue-800 text-xs font-medium">Edit</a>
+                                <button onclick="toggleStatus('@user.Id', this)"
+                                        class="text-yellow-600 hover:text-yellow-800 text-xs font-medium">
+                                    @(user.IsActive ? "Deactivate" : "Activate")
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function toggleStatus(userId, btn) {
+    fetch(`/Admin/UserManagement/ToggleStatus/${userId}`, {
+        method: 'POST',
+        headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').first().val() }
+    })
+    .then(r => r.json()).then(d => {
+        if (d.success) { toastr.success('Status updated.'); location.reload(); }
+    });
+}
+</script>
+}

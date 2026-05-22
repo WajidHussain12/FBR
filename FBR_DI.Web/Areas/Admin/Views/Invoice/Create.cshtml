@@ -1,0 +1,188 @@
+@model CreateInvoiceViewModel
+@{
+    ViewData["Title"] = "Create Invoice";
+}
+
+<div class="max-w-5xl space-y-5">
+    <div class="flex items-center gap-4">
+        <a href="/Admin/Invoice/Index" class="text-gray-400 hover:text-gray-600"><i class="fa fa-arrow-left"></i></a>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Create Invoice</h1>
+            <p class="text-sm text-gray-500 mt-0.5">Fill in all sections to create a new FBR invoice</p>
+        </div>
+    </div>
+
+    <form id="invoiceForm" asp-action="Create" method="post" class="space-y-5">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm"></div>
+
+        <!-- Section 1: Invoice Header -->
+        <div class="card space-y-4">
+            <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">
+                <i class="fa fa-info-circle text-blue-500 mr-2"></i>Invoice Header
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label asp-for="CompanyId" class="form-label">Company</label>
+                    <select asp-for="CompanyId" id="companySelect" class="form-input"
+                            data-preselected="@Model.CompanyId"
+                            onchange="onCompanyChange(this)">
+                        <option value="">Select Company...</option>
+                    </select>
+                    <span asp-validation-for="CompanyId" class="text-red-500 text-xs"></span>
+                </div>
+                <div>
+                    <label asp-for="InvoiceType" class="form-label">Invoice Type</label>
+                    <select asp-for="InvoiceType" asp-items="ViewBag.InvoiceTypes" class="form-input" onchange="onInvoiceTypeChange(this)"></select>
+                </div>
+                <div>
+                    <label asp-for="InvoiceDate" class="form-label">Invoice Date</label>
+                    <input asp-for="InvoiceDate" type="date" class="form-input" />
+                    <span asp-validation-for="InvoiceDate" class="text-red-500 text-xs"></span>
+                </div>
+                <div id="invoiceRefNoField" class="hidden">
+                    <label asp-for="InvoiceRefNo" class="form-label">Invoice Reference No <span class="text-red-500">*</span></label>
+                    <input asp-for="InvoiceRefNo" class="form-input" placeholder="22 or 28 character reference" />
+                </div>
+                <div id="scenarioIdField" class="hidden">
+                    <label asp-for="ScenarioId" class="form-label">Scenario ID (Sandbox)</label>
+                    <input asp-for="ScenarioId" class="form-input" placeholder="e.g. SN001" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Seller Information -->
+        <div class="card space-y-4">
+            <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">
+                <i class="fa fa-store text-blue-500 mr-2"></i>Seller Information
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="SellerNTNCNIC" class="form-label">Seller NTN/CNIC</label>
+                    <input asp-for="SellerNTNCNIC" class="form-input" />
+                    <span asp-validation-for="SellerNTNCNIC" class="text-red-500 text-xs"></span>
+                </div>
+                <div>
+                    <label asp-for="SellerBusinessName" class="form-label">Seller Business Name</label>
+                    <input asp-for="SellerBusinessName" class="form-input" />
+                </div>
+                <div>
+                    <label asp-for="SellerProvince" class="form-label">Seller Province</label>
+                    <input asp-for="SellerProvince" class="form-input" />
+                </div>
+                <div>
+                    <label asp-for="SellerAddress" class="form-label">Seller Address</label>
+                    <input asp-for="SellerAddress" class="form-input" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Buyer Information -->
+        <div class="card space-y-4">
+            <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">
+                <i class="fa fa-user text-blue-500 mr-2"></i>Buyer Information
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="BuyerRegistrationType" class="form-label">Registration Type</label>
+                    <select asp-for="BuyerRegistrationType" asp-items="ViewBag.RegistrationTypes" class="form-input" onchange="onBuyerRegTypeChange(this)"></select>
+                </div>
+                <div id="buyerNtnField">
+                    <label asp-for="BuyerNTNCNIC" class="form-label">Buyer NTN/CNIC</label>
+                    <div class="flex gap-2">
+                        <input asp-for="BuyerNTNCNIC" class="form-input flex-1" />
+                        <button type="button" onclick="checkBuyerStatus()" class="btn-secondary whitespace-nowrap">
+                            <i class="fa fa-search mr-1"></i>Check Status
+                        </button>
+                    </div>
+                    <div id="buyerStatusResult" class="text-xs mt-1"></div>
+                </div>
+                <div>
+                    <label asp-for="BuyerBusinessName" class="form-label">Buyer Business Name</label>
+                    <input asp-for="BuyerBusinessName" class="form-input" />
+                </div>
+                <div>
+                    <label asp-for="BuyerProvince" class="form-label">Buyer Province</label>
+                    <input asp-for="BuyerProvince" class="form-input" />
+                </div>
+                <div class="md:col-span-2">
+                    <label asp-for="BuyerAddress" class="form-label">Buyer Address</label>
+                    <input asp-for="BuyerAddress" class="form-input" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Invoice Items -->
+        <div class="card space-y-4">
+            <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                <h2 class="text-base font-semibold text-gray-900">
+                    <i class="fa fa-list text-blue-500 mr-2"></i>Invoice Items
+                </h2>
+                <button type="button" onclick="addItemRow()" class="btn-success text-sm">
+                    <i class="fa fa-plus mr-1"></i>Add Item
+                </button>
+            </div>
+            <div id="itemsContainer" class="space-y-4"></div>
+            <p id="noItemsMsg" class="text-center text-gray-400 py-4 text-sm">Click "Add Item" to add invoice items.</p>
+        </div>
+
+        <!-- Section 5: Totals Summary -->
+        <div class="card">
+            <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">
+                <i class="fa fa-calculator text-blue-500 mr-2"></i>Totals Summary
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                <div class="bg-gray-50 rounded-lg p-3">
+                    <div class="text-xs text-gray-500">Value Excl. ST</div>
+                    <div id="totalValueExclST" class="text-lg font-bold text-gray-900">0.00</div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-3">
+                    <div class="text-xs text-gray-500">Sales Tax</div>
+                    <div id="totalSalesTax" class="text-lg font-bold text-gray-900">0.00</div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-3">
+                    <div class="text-xs text-gray-500">Further Tax</div>
+                    <div id="totalFurtherTax" class="text-lg font-bold text-gray-900">0.00</div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-3">
+                    <div class="text-xs text-gray-500">Extra Tax</div>
+                    <div id="totalExtraTax" class="text-lg font-bold text-gray-900">0.00</div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-3">
+                    <div class="text-xs text-gray-500">FED Payable</div>
+                    <div id="totalFedPayable" class="text-lg font-bold text-gray-900">0.00</div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-3">
+                    <div class="text-xs text-gray-500">Discount</div>
+                    <div id="totalDiscount" class="text-lg font-bold text-gray-900">0.00</div>
+                </div>
+            </div>
+            <div class="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center justify-between">
+                <span class="font-semibold text-gray-700">Grand Total (PKR)</span>
+                <span id="grandTotal" class="text-2xl font-bold text-blue-700">0.00</span>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap gap-3">
+            <button type="submit" name="action" value="draft" class="btn-secondary">
+                <i class="fa fa-save mr-2"></i>Save as Draft
+            </button>
+            <button type="submit" name="action" value="validate" class="btn-warning">
+                <i class="fa fa-check mr-2"></i>Save &amp; Validate
+            </button>
+            <button type="submit" name="action" value="submit" class="btn-primary">
+                <i class="fa fa-paper-plane mr-2"></i>Save &amp; Submit to FBR
+            </button>
+            <a href="/Admin/Invoice/Index" class="btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const SALE_TYPES = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            FBR_DI.Infrastructure.SeedData.FbrSaleTypeMapper.GetAllStrings().ToArray()));
+    </script>
+    <script src="~/js/invoice-create.js"></script>
+}

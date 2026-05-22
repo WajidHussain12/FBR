@@ -1,0 +1,245 @@
+@using Microsoft.Extensions.Configuration
+@inject Microsoft.Extensions.Configuration.IConfiguration _config
+@{
+    bool _isMock = _config.GetValue<bool>("FbrApi:UseMockService", true);
+}
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-50">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(ViewData["Title"] ?? "FBR Digital Invoicing") - Admin</title>
+    <link rel="stylesheet" href="~/css/tailwind.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+</head>
+<body class="h-full flex flex-col">
+
+@if (_isMock)
+{
+    <div class="bg-yellow-400 text-yellow-900 text-xs font-semibold py-1.5 px-4 flex-shrink-0 flex items-center justify-center gap-3 flex-wrap">
+        <span><i class="fa fa-flask mr-1"></i>DEMO MODE &mdash; Mock FBR API Active. Real submissions are simulated.</span>
+        <a href="/Admin/Settings/Index"
+           class="inline-flex items-center gap-1 bg-yellow-600 text-white px-2.5 py-0.5 rounded-full text-xs font-bold hover:bg-yellow-700 transition-colors whitespace-nowrap">
+            <i class="fa fa-arrow-right text-xs"></i> Configure Live API
+        </a>
+    </div>
+}
+
+<div class="flex flex-1 overflow-hidden">
+
+<!-- Sidebar -->
+<aside id="sidebar" class="w-64 bg-gray-900 flex-shrink-0 flex flex-col min-h-screen transition-all duration-300">
+    <!-- Logo -->
+    <div class="flex items-center gap-3 px-6 py-5 border-b border-gray-700">
+        <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
+            <i class="fa fa-file-invoice text-white text-sm"></i>
+        </div>
+        <div>
+            <div class="text-white font-bold text-sm leading-tight">FBR Digital</div>
+            <div class="text-gray-400 text-xs">Invoicing System</div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+        <a href="/Admin/Dashboard/Index"
+           class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")">
+            <i class="fa fa-gauge w-5 text-center"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/Admin/Company/Index"
+           class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Company" ? "active" : "")">
+            <i class="fa fa-building w-5 text-center"></i>
+            <span>Companies</span>
+        </a>
+
+        <!-- Invoices submenu -->
+        <div x-data="{ open: @(ViewContext.RouteData.Values["controller"]?.ToString() == "Invoice" ? "true" : "false") }">
+            <button @@click="open = !open"
+                    class="sidebar-link w-full justify-between @(ViewContext.RouteData.Values["controller"]?.ToString() == "Invoice" ? "active" : "")">
+                <div class="flex items-center gap-3">
+                    <i class="fa fa-file-invoice w-5 text-center"></i>
+                    <span>Invoices</span>
+                </div>
+                <i class="fa fa-chevron-down text-xs transition-transform" :class="{ 'rotate-180': open }"></i>
+            </button>
+            <div x-show="open" class="ml-8 mt-1 space-y-1">
+                <a href="/Admin/Invoice/Index" class="sidebar-link text-sm py-1.5">All Invoices</a>
+                <a href="/Admin/Invoice/Create" class="sidebar-link text-sm py-1.5">Create Invoice</a>
+            </div>
+        </div>
+
+        <a href="/Admin/ReferenceData/Index"
+           class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ReferenceData" ? "active" : "")">
+            <i class="fa fa-database w-5 text-center"></i>
+            <span>Reference Data</span>
+        </a>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <a href="/Admin/Setup/Database"
+               class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Setup" ? "active" : "")">
+                <i class="fa fa-server w-5 text-center"></i>
+                <span>Database Setup</span>
+            </a>
+            <a href="/Admin/Settings/Index"
+               class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Settings" ? "active" : "")">
+                <i class="fa fa-gear w-5 text-center"></i>
+                <span>Settings</span>
+            </a>
+            <a href="/Admin/UserManagement/Index"
+               class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "UserManagement" ? "active" : "")">
+                <i class="fa fa-users w-5 text-center"></i>
+                <span>User Management</span>
+            </a>
+        }
+    </nav>
+
+    <!-- User info -->
+    <div class="px-4 py-4 border-t border-gray-700">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                <span class="text-white text-xs font-bold">@(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")</span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="text-white text-xs font-medium truncate">@User.Identity?.Name</div>
+                <div class="text-gray-400 text-xs">Administrator</div>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- Main content -->
+<div class="flex-1 flex flex-col min-h-screen overflow-hidden">
+    <!-- Top navbar -->
+    <header class="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between flex-shrink-0">
+        <div class="flex items-center gap-4">
+            <button id="sidebarToggle" class="text-gray-500 hover:text-gray-700 lg:hidden">
+                <i class="fa fa-bars text-lg"></i>
+            </button>
+            <!-- Breadcrumbs -->
+            <nav class="text-sm text-gray-500">
+                <span class="text-blue-600 font-medium">@(ViewData["Title"] ?? "Dashboard")</span>
+            </nav>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-xs text-gray-400 hidden sm:inline">@DateTime.Now.ToString("dddd, dd MMM yyyy")</span>
+
+            @* ── API Mode Toggle ─────────────────────────────────────────── *@
+            <div class="relative" id="apiModeWidget">
+                @if (_isMock)
+                {
+                    <button type="button" onclick="toggleApiDropdown()"
+                            class="flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 hover:bg-yellow-200 border border-yellow-300 transition-colors">
+                        <i class="fa fa-flask"></i><span>MOCK</span><i class="fa fa-chevron-down text-xs"></i>
+                    </button>
+                    <div id="apiModeDropdown" class="hidden absolute right-0 top-full mt-2 w-60 bg-white rounded-xl shadow-xl border border-gray-200 p-4 z-50">
+                        <p class="text-xs font-semibold text-gray-800 mb-1"><i class="fa fa-flask text-yellow-500 mr-1"></i>Mock Mode Active</p>
+                        <p class="text-xs text-gray-500 mb-3">No real FBR calls are made. 80% succeed, 20% fail to simulate the real API.</p>
+                        <a href="/Admin/Settings/Index"
+                           class="flex items-center justify-center gap-2 w-full bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-colors">
+                            <i class="fa fa-plug"></i> Switch to Live FBR API
+                        </a>
+                        <p class="text-xs text-gray-400 mt-2 text-center">Requires a PRAL Bearer Token</p>
+                    </div>
+                }
+                else
+                {
+                    <button type="button" onclick="toggleApiDropdown()"
+                            class="flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-green-100 text-green-800 hover:bg-green-200 border border-green-300 transition-colors">
+                        <i class="fa fa-circle-check"></i><span>LIVE</span><i class="fa fa-chevron-down text-xs"></i>
+                    </button>
+                    <div id="apiModeDropdown" class="hidden absolute right-0 top-full mt-2 w-60 bg-white rounded-xl shadow-xl border border-gray-200 p-4 z-50">
+                        <p class="text-xs font-semibold text-gray-800 mb-1"><i class="fa fa-circle-check text-green-500 mr-1"></i>Live FBR API Active</p>
+                        <p class="text-xs text-gray-500 mb-3">All invoice submissions go to the real FBR PRAL endpoints.</p>
+                        <form id="layoutMockForm">
+                            @Html.AntiForgeryToken()
+                            <button type="button" onclick="layoutSwitchToMock()"
+                                    class="flex items-center justify-center gap-2 w-full bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-colors">
+                                <i class="fa fa-flask"></i> Switch to Mock Mode
+                            </button>
+                        </form>
+                        <p class="text-xs text-gray-400 mt-2 text-center">Useful for testing without FBR quota</p>
+                    </div>
+                }
+            </div>
+
+            <form asp-area="Admin" asp-controller="Auth" asp-action="Logout" method="post" class="inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="flex items-center gap-2 text-sm text-gray-600 hover:text-red-600 transition-colors">
+                    <i class="fa fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </form>
+        </div>
+    </header>
+
+    <!-- Page content -->
+    <main class="flex-1 overflow-y-auto p-6">
+        @if (TempData["Success"] != null)
+        {
+            <div class="mb-4 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg flex items-center gap-2">
+                <i class="fa fa-check-circle text-green-500"></i>
+                <span>@TempData["Success"]</span>
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="mb-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center gap-2">
+                <i class="fa fa-exclamation-circle text-red-500"></i>
+                <span>@TempData["Error"]</span>
+            </div>
+        }
+        @RenderBody()
+    </main>
+</div><!-- end flex-1 main content -->
+</div><!-- end flex wrapper -->
+
+<!-- Scripts -->
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script>
+    toastr.options = { positionClass: 'toast-top-right', timeOut: 3000 };
+    $.ajaxSetup({
+        headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() }
+    });
+
+    // ── API Mode dropdown ────────────────────────────────────────────────────
+    function toggleApiDropdown() {
+        document.getElementById('apiModeDropdown').classList.toggle('hidden');
+    }
+    document.addEventListener('click', function(e) {
+        const widget = document.getElementById('apiModeWidget');
+        if (widget && !widget.contains(e.target)) {
+            document.getElementById('apiModeDropdown')?.classList.add('hidden');
+        }
+    });
+
+    // ── Switch to Mock from header dropdown ──────────────────────────────────
+    async function layoutSwitchToMock() {
+        const csrf = document.querySelector('#layoutMockForm [name="__RequestVerificationToken"]')?.value ?? '';
+        try {
+            const resp = await fetch('/Admin/Settings/SwitchToMockApi', {
+                method: 'POST', headers: { 'RequestVerificationToken': csrf }
+            });
+            const data = await resp.json();
+            if (data.success) {
+                toastr.success('Switched to Mock Mode. Reloading…');
+                setTimeout(() => location.reload(), 1800);
+            } else {
+                toastr.error(data.message);
+            }
+        } catch(e) {
+            toastr.error('Request failed: ' + e.message);
+        }
+    }
+</script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

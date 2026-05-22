@@ -1,0 +1,371 @@
+@model DatabaseSetupViewModel
+@inject IConfiguration Configuration
+@{
+    ViewData["Title"] = "Database Setup";
+
+    var currentProvider = Configuration["Database:Provider"] ?? "SqlServer";
+    var currentCs       = Configuration["Database:ConnectionString"]
+                          ?? Configuration.GetConnectionString("DefaultConnection")
+                          ?? string.Empty;
+}
+
+<div class="max-w-3xl space-y-6">
+
+    @* Header *@
+    <div class="flex items-center gap-4">
+        <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+            <i class="fa fa-database text-white"></i>
+        </div>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Database Setup</h1>
+            <p class="text-sm text-gray-500">Configure the database engine for this deployment.</p>
+        </div>
+    </div>
+
+    @* Current Configuration *@
+    <div class="card bg-blue-50 border border-blue-200">
+        <div class="flex items-start gap-3">
+            <i class="fa fa-info-circle text-blue-500 mt-0.5"></i>
+            <div class="text-sm text-blue-800">
+                <p class="font-semibold mb-1">Current Configuration</p>
+                <p>Provider: <code class="bg-blue-100 px-1 rounded font-mono">@currentProvider</code></p>
+                <p class="mt-1 break-all">Connection:
+                    <code class="bg-blue-100 px-1 rounded font-mono text-xs">
+                        @(currentCs.Length > 80 ? currentCs[..80] + "…" : currentCs)
+                    </code>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    @* Configuration Form *@
+    <div class="card space-y-5">
+        <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">
+            <i class="fa fa-edit mr-2 text-gray-400"></i>Change Database Provider
+        </h2>
+
+        <form asp-action="Database" method="post" id="dbForm" class="space-y-5">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All"
+                 class="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm hidden"></div>
+
+            @* Provider *@
+            <div>
+                <label asp-for="Provider" class="form-label">Database Engine</label>
+                <select asp-for="Provider" id="providerSelect" class="form-input"
+                        onchange="onProviderChange(this.value)">
+                    <option value="SqlServer">Microsoft SQL Server</option>
+                    <option value="MySQL">MySQL / MariaDB</option>
+                    <option value="PostgreSQL">PostgreSQL</option>
+                    <option value="SQLite">SQLite (Local File)</option>
+                </select>
+                <p class="text-xs text-gray-400 mt-1">
+                    Select the database engine that matches your server setup.
+                </p>
+            </div>
+
+            @* Connection String *@
+            <div>
+                <label asp-for="ConnectionString" class="form-label">Connection String</label>
+                <textarea asp-for="ConnectionString" id="connectionString" rows="3"
+                          class="form-input font-mono text-xs"
+                          placeholder="Enter connection string..."></textarea>
+                <p id="csHint" class="text-xs text-gray-400 mt-1"></p>
+                <span asp-validation-for="ConnectionString" class="text-red-500 text-xs"></span>
+            </div>
+
+            @* Test result badge *@
+            <div id="testResult" class="hidden"></div>
+
+            @* Actions *@
+            <div class="flex gap-3 pt-2">
+                <button type="button" onclick="testConnection()"
+                        class="btn-secondary">
+                    <i class="fa fa-plug mr-2"></i>Test Connection
+                </button>
+                <button type="submit" id="saveBtn" class="btn-primary">
+                    <i class="fa fa-save mr-2"></i>Save Configuration
+                </button>
+            </div>
+        </form>
+    </div>
+
+    @* Reference Cards *@
+    <div class="card space-y-4">
+        <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">
+            <i class="fa fa-book mr-2 text-gray-400"></i>Connection String Examples
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                <div class="flex items-center gap-2">
+                    <img src="https://img.shields.io/badge/-SQL%20Server-CC2927?logo=microsoftsqlserver&logoColor=white&style=flat-square"
+                         alt="SQL Server" class="h-5" />
+                </div>
+                <code class="block text-xs font-mono text-gray-700 break-all">
+                    Server=localhost;Database=FbrDI;User Id=sa;Password=YourPwd;TrustServerCertificate=True;
+                </code>
+                <p class="text-xs text-gray-400">LocalDB: <span class="font-mono">Server=(localdb)\mssqllocaldb;...</span></p>
+            </div>
+
+            <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                <div class="flex items-center gap-2">
+                    <img src="https://img.shields.io/badge/-MySQL-4479A1?logo=mysql&logoColor=white&style=flat-square"
+                         alt="MySQL" class="h-5" />
+                </div>
+                <code class="block text-xs font-mono text-gray-700 break-all">
+                    Server=localhost;Port=3306;Database=FbrDI;Uid=root;Pwd=YourPwd;
+                </code>
+                <p class="text-xs text-gray-400">Works with MariaDB using the same format.</p>
+            </div>
+
+            <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                <div class="flex items-center gap-2">
+                    <img src="https://img.shields.io/badge/-PostgreSQL-336791?logo=postgresql&logoColor=white&style=flat-square"
+                         alt="PostgreSQL" class="h-5" />
+                </div>
+                <code class="block text-xs font-mono text-gray-700 break-all">
+                    Host=localhost;Port=5432;Database=FbrDI;Username=postgres;Password=YourPwd;
+                </code>
+                <p class="text-xs text-gray-400">Supports SSL: append <span class="font-mono">Ssl Mode=Require;</span></p>
+            </div>
+
+            <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                <div class="flex items-center gap-2">
+                    <img src="https://img.shields.io/badge/-SQLite-003B57?logo=sqlite&logoColor=white&style=flat-square"
+                         alt="SQLite" class="h-5" />
+                </div>
+                <code class="block text-xs font-mono text-gray-700 break-all">
+                    Data Source=fbr_digital_invoicing.db;
+                </code>
+                <p class="text-xs text-gray-400">Ideal for single-user / testing. File is created automatically.</p>
+            </div>
+
+        </div>
+
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm text-yellow-800">
+            <i class="fa fa-triangle-exclamation mr-2"></i>
+            <strong>After saving:</strong> restart the application (button below) so the new provider takes effect.
+            Run <code class="font-mono bg-yellow-100 px-1 rounded">dotnet ef migrations add &lt;Name&gt;</code>
+            and <code class="font-mono bg-yellow-100 px-1 rounded">dotnet ef database update</code>
+            if switching providers for the first time.
+        </div>
+    </div>
+
+    @* ── Restart Application Card ──────────────────────────────────────── *@
+    <div class="card space-y-4" id="restartCard">
+        <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">
+            <i class="fa fa-rotate-right text-orange-500 mr-2"></i>Restart Application
+        </h2>
+        <p class="text-sm text-gray-600">
+            After changing the database provider or connection string, restart the running application
+            so the new settings take effect. The server process manager (IIS, systemd, Docker, PM2)
+            will automatically bring the app back online.
+        </p>
+        <div class="flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-lg p-4">
+            <i class="fa fa-circle-info text-orange-500 flex-shrink-0"></i>
+            <p class="text-xs text-orange-800">
+                The app will be unavailable for a few seconds while restarting.
+                Active sessions will be preserved — users will need to log in again.
+            </p>
+        </div>
+        <form id="restartForm">
+            @Html.AntiForgeryToken()
+            <button type="button" id="restartBtn" onclick="confirmRestart()"
+                    class="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors">
+                <i class="fa fa-rotate-right"></i> Restart Application Now
+            </button>
+        </form>
+    </div>
+
+</div>
+
+@* ── Restart Overlay ────────────────────────────────────────────────────── *@
+<div id="restartOverlay"
+     class="hidden fixed inset-0 bg-gray-900/80 backdrop-blur-sm z-50 flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center space-y-5">
+        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto">
+            <i id="restartIcon" class="fa fa-rotate-right text-orange-500 text-2xl fa-spin"></i>
+        </div>
+        <div>
+            <h3 class="text-lg font-bold text-gray-900" id="restartTitle">Restarting Application…</h3>
+            <p class="text-sm text-gray-500 mt-1" id="restartMsg">Please wait while the server restarts.</p>
+        </div>
+        <div class="w-full bg-gray-100 rounded-full h-2">
+            <div id="restartProgress" class="h-2 bg-orange-500 rounded-full transition-all duration-500" style="width:0%"></div>
+        </div>
+        <p id="restartCountdown" class="text-xs text-gray-400">Waiting for server…</p>
+        <a id="restartManualLink" href="/Admin/Dashboard/Index"
+           class="hidden text-sm text-blue-600 hover:underline">
+            Click here if not redirected automatically →
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+const TEMPLATES = {
+    SqlServer:  'Server=localhost;Database=FbrDigitalInvoicingDb;User Id=sa;Password=YourPassword;TrustServerCertificate=True;',
+    MySQL:      'Server=localhost;Port=3306;Database=FbrDigitalInvoicingDb;Uid=root;Pwd=YourPassword;',
+    PostgreSQL: 'Host=localhost;Port=5432;Database=FbrDigitalInvoicingDb;Username=postgres;Password=YourPassword;',
+    SQLite:     'Data Source=fbr_digital_invoicing.db;'
+};
+
+const HINTS = {
+    SqlServer:  'For SQL Server Express / LocalDB use: Server=(localdb)\\mssqllocaldb;Database=...;Trusted_Connection=True;',
+    MySQL:      'Ensure the database exists first. The user must have CREATE TABLE privileges.',
+    PostgreSQL: 'The database must exist. The user needs CREATETABLE privilege or superuser role.',
+    SQLite:     'The file path is relative to the application root. No server required.'
+};
+
+function onProviderChange(value) {
+    const cs   = document.getElementById('connectionString');
+    const hint = document.getElementById('csHint');
+    if (!cs.value || Object.values(TEMPLATES).includes(cs.value.trim())) {
+        cs.value = TEMPLATES[value] || '';
+    }
+    hint.textContent = HINTS[value] || '';
+    clearTestResult();
+}
+
+function clearTestResult() {
+    const el = document.getElementById('testResult');
+    el.className = 'hidden';
+    el.innerHTML = '';
+}
+
+async function testConnection() {
+    const provider = document.getElementById('providerSelect').value;
+    const cs       = document.getElementById('connectionString').value.trim();
+    const resultEl = document.getElementById('testResult');
+
+    if (!cs) {
+        showTestResult(false, 'Please enter a connection string before testing.');
+        return;
+    }
+
+    resultEl.className = 'flex items-center gap-2 text-sm p-3 rounded-lg bg-gray-50 border border-gray-200';
+    resultEl.innerHTML = '<i class="fa fa-spinner fa-spin text-gray-500"></i> <span class="text-gray-600">Testing connection…</span>';
+
+    try {
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+        const resp  = await fetch('@Url.Action("TestConnection", "Setup", new { area = "Admin" })', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': token
+            },
+            body: JSON.stringify({ provider, connectionString: cs })
+        });
+        const data = await resp.json();
+        showTestResult(data.success, data.success ? 'Connection successful!' : data.error);
+    } catch (err) {
+        showTestResult(false, 'Request failed: ' + err.message);
+    }
+}
+
+function showTestResult(success, message) {
+    const el = document.getElementById('testResult');
+    el.className = 'flex items-center gap-2 text-sm p-3 rounded-lg ' +
+        (success
+            ? 'bg-green-50 border border-green-200 text-green-800'
+            : 'bg-red-50 border border-red-200 text-red-800');
+    el.innerHTML = `<i class="fa ${success ? 'fa-check-circle text-green-500' : 'fa-times-circle text-red-500'}"></i>
+                    <span>${message}</span>`;
+}
+
+// Initialise on page load
+document.addEventListener('DOMContentLoaded', () => {
+    const select = document.getElementById('providerSelect');
+    const hint   = document.getElementById('csHint');
+    hint.textContent = HINTS[select.value] || '';
+});
+
+// ── Restart Application ──────────────────────────────────────────────────────
+async function confirmRestart() {
+    const confirmed = await Swal.fire({
+        title:              'Restart Application?',
+        html:               'The app will be unavailable for a few seconds.<br><strong>The process manager will bring it back automatically.</strong>',
+        icon:               'warning',
+        showCancelButton:   true,
+        confirmButtonColor: '#ea580c',
+        cancelButtonColor:  '#6b7280',
+        confirmButtonText:  '<i class="fa fa-rotate-right mr-1"></i> Yes, Restart Now',
+        cancelButtonText:   'Cancel'
+    });
+    if (!confirmed.isConfirmed) return;
+
+    const csrf = document.querySelector('#restartForm [name="__RequestVerificationToken"]').value;
+    const btn  = document.getElementById('restartBtn');
+    btn.disabled  = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i>Sending restart signal…';
+
+    try {
+        const resp = await fetch('@Url.Action("RestartApp", "Setup", new { area = "Admin" })', {
+            method: 'POST',
+            headers: { 'RequestVerificationToken': csrf }
+        });
+        const data = await resp.json();
+        if (data.success) {
+            showRestartOverlay();
+        } else {
+            toastr.error('Restart signal failed.');
+            btn.disabled  = false;
+            btn.innerHTML = '<i class="fa fa-rotate-right mr-2"></i>Restart Application Now';
+        }
+    } catch(e) {
+        // If fetch itself throws, the server may already be stopping — show overlay anyway.
+        showRestartOverlay();
+    }
+}
+
+function showRestartOverlay() {
+    document.getElementById('restartOverlay').classList.remove('hidden');
+
+    const title     = document.getElementById('restartTitle');
+    const msg       = document.getElementById('restartMsg');
+    const progress  = document.getElementById('restartProgress');
+    const countdown = document.getElementById('restartCountdown');
+    const manualLink= document.getElementById('restartManualLink');
+    const icon      = document.getElementById('restartIcon');
+
+    let elapsed = 0;
+    const MAX_WAIT = 45; // seconds before showing manual link
+
+    const poll = setInterval(async () => {
+        elapsed++;
+        const pct = Math.min(95, (elapsed / MAX_WAIT) * 100);
+        progress.style.width = pct + '%';
+        countdown.textContent = `Waiting… ${elapsed}s`;
+
+        if (elapsed > MAX_WAIT) {
+            clearInterval(poll);
+            title.textContent = 'Taking longer than expected…';
+            msg.textContent   = 'The server may need a moment. Try the link below.';
+            manualLink.classList.remove('hidden');
+            countdown.textContent = '';
+            return;
+        }
+
+        try {
+            const ping = await fetch('/Admin/Setup/Ping', { cache: 'no-store' });
+            if (ping.ok) {
+                clearInterval(poll);
+                icon.classList.remove('fa-spin');
+                icon.classList.replace('text-orange-500', 'text-green-500');
+                icon.classList.replace('fa-rotate-right', 'fa-check-circle');
+                title.textContent    = 'Application Restarted!';
+                msg.textContent      = 'Redirecting to Dashboard…';
+                progress.style.width = '100%';
+                progress.classList.replace('bg-orange-500', 'bg-green-500');
+                countdown.textContent= '';
+                setTimeout(() => { window.location.href = '/Admin/Dashboard/Index'; }, 1200);
+            }
+        } catch(_) {
+            // Server still down — keep polling
+            msg.textContent = 'Server restarting… please wait.';
+        }
+    }, 2000);
+}
+</script>
+}

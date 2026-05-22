@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ActiveDebugProfile>https</ActiveDebugProfile>
+    <_SelectedScaffolderID>AreaScaffolder</_SelectedScaffolderID>
+    <_SelectedScaffolderCategoryPath>root/Common</_SelectedScaffolderCategoryPath>
+    <WebStackScaffolding_DependencyDialogWidth>650</WebStackScaffolding_DependencyDialogWidth>
+    <NameOfLastUsedPublishProfile>C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Web\Properties\PublishProfiles\FolderProfile7.pubxml</NameOfLastUsedPublishProfile>
+  </PropertyGroup>
+</Project>

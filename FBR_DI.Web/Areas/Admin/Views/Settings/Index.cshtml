@@ -1,0 +1,300 @@
+@model SettingsViewModel
+@{
+    ViewData["Title"] = "Application Settings";
+}
+
+<div class="max-w-3xl space-y-6">
+
+    @* Header *@
+    <div class="flex items-center gap-4">
+        <div class="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center flex-shrink-0">
+            <i class="fa fa-gear text-white"></i>
+        </div>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Application Settings</h1>
+            <p class="text-sm text-gray-500">Manage FBR API mode, database, and application configuration.</p>
+        </div>
+    </div>
+
+    @* ═══════════════════════════════════════════════════════════════════
+       SECTION 1 — FBR API Configuration
+       ═══════════════════════════════════════════════════════════════════ *@
+    <div class="card space-y-5">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+            <h2 class="text-base font-semibold text-gray-900">
+                <i class="fa fa-plug text-blue-500 mr-2"></i>FBR API Configuration
+            </h2>
+            @* Live status badge *@
+            <span id="statusBadge"
+                  class="@(Model.IsMockMode ? "badge-warning" : "badge-success") cursor-pointer"
+                  title="Click to refresh status"
+                  onclick="refreshApiStatus()">
+                <i class="fa @(Model.IsMockMode ? "fa-flask" : "fa-circle-check") mr-1"></i>
+                @(Model.IsMockMode ? "MOCK MODE" : "LIVE MODE")
+            </span>
+        </div>
+
+        @* Current mode explanation *@
+        @if (Model.IsMockMode)
+        {
+            <div class="flex gap-3 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <i class="fa fa-flask text-yellow-500 mt-0.5 flex-shrink-0"></i>
+                <div class="text-sm text-yellow-800">
+                    <p class="font-semibold mb-1">Mock Mode is Active</p>
+                    <p>Invoices are simulated — no real FBR calls are made. 80% succeed, 20% fail
+                       to emulate the real API. Switch to Live Mode once you receive your PRAL Bearer Token.</p>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="flex gap-3 bg-green-50 border border-green-200 rounded-lg p-4">
+                <i class="fa fa-circle-check text-green-500 mt-0.5 flex-shrink-0"></i>
+                <div class="text-sm text-green-800">
+                    <p class="font-semibold mb-1">Live FBR API is Active</p>
+                    <p>All invoice submissions hit the real FBR PRAL endpoints.
+                       Make sure each company has a valid Bearer Token configured.</p>
+                </div>
+            </div>
+        }
+
+        @* API Status row *@
+        <div class="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3 text-sm">
+            <div class="flex items-center gap-2 text-gray-600">
+                <i class="fa fa-wifi"></i>
+                <span>API Status</span>
+            </div>
+            <div id="apiStatusRow" class="flex items-center gap-2 text-gray-400 text-xs">
+                <i class="fa fa-spinner fa-spin"></i> Checking…
+            </div>
+        </div>
+
+        @* SWITCH TO LIVE (mock mode only) *@
+        @if (Model.IsMockMode)
+        {
+            <div class="space-y-3 border border-dashed border-green-300 rounded-xl p-4 bg-green-50/40">
+                <p class="text-sm font-semibold text-gray-800">
+                    <i class="fa fa-arrow-right text-green-600 mr-1"></i>Switch to Live FBR API
+                </p>
+                <p class="text-xs text-gray-500">
+                    Paste your PRAL Bearer Token below. The system will call the FBR Provinces endpoint
+                    to verify it works before making the switch.
+                </p>
+                <div>
+                    <label class="form-label">PRAL Bearer Token (for validation)</label>
+                    <textarea id="testToken" rows="3"
+                              class="form-input font-mono text-xs"
+                              placeholder="Paste full Bearer Token here…"></textarea>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button id="switchBtn" onclick="switchToLiveApi()"
+                            class="btn-success">
+                        <i class="fa fa-check mr-2"></i>Validate &amp; Switch to Live
+                    </button>
+                    <span id="switchResult" class="text-xs hidden"></span>
+                </div>
+                <p class="text-xs text-gray-400">
+                    <i class="fa fa-info-circle mr-1"></i>
+                    After switching, add the token to each Company via
+                    <strong>Companies → [Company] → FBR Settings</strong>, then sync reference data.
+                </p>
+            </div>
+        }
+
+        @* SWITCH TO MOCK (live mode only) *@
+        @if (!Model.IsMockMode)
+        {
+            <div class="space-y-3 border border-dashed border-yellow-300 rounded-xl p-4 bg-yellow-50/40">
+                <p class="text-sm font-semibold text-gray-800">
+                    <i class="fa fa-flask text-yellow-600 mr-1"></i>Switch to Mock Mode
+                </p>
+                <p class="text-xs text-gray-500">
+                    Revert to the simulated FBR API. Useful for testing without consuming real FBR quota.
+                </p>
+                <form method="post" asp-action="SwitchToMockApi" id="mockForm">
+                    @Html.AntiForgeryToken()
+                    <button type="button" onclick="switchToMockApi()"
+                            class="btn-warning">
+                        <i class="fa fa-flask mr-2"></i>Switch to Mock Mode
+                    </button>
+                </form>
+            </div>
+        }
+    </div>
+
+    @* ═══════════════════════════════════════════════════════════════════
+       SECTION 2 — Token Workflow Guide
+       ═══════════════════════════════════════════════════════════════════ *@
+    <div class="card space-y-4">
+        <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">
+            <i class="fa fa-map text-blue-500 mr-2"></i>PRAL Token Onboarding Guide
+        </h2>
+        <ol class="space-y-4">
+            @{
+                var steps = new[]
+                {
+                    ("1", "fa-envelope", "Receive PRAL Bearer Token",
+                     "FBR emails your Bearer Token after company registration on the FBR portal."),
+                    ("2", "fa-plug", "Validate &amp; Switch to Live (this page)",
+                     "Paste the token above and click \"Validate &amp; Switch to Live\". The system tests the token against FBR."),
+                    ("3", "fa-building", "Configure Company Token",
+                     "Go to Companies → [Company] → FBR Settings. Enter the token, select Sandbox or Production, save."),
+                    ("4", "fa-database", "Sync Reference Data",
+                     "Still in FBR Settings, click \"Sync All Reference Data\". This fetches real HS codes, UOM, tax rates from FBR."),
+                    ("5", "fa-file-invoice", "Submit Real Invoices",
+                     "Create an invoice — dropdowns show real FBR data. Submit to get a genuine FBR invoice number and QR code.")
+                };
+            }
+            @foreach (var (num, icon, title, desc) in steps)
+            {
+                <li class="flex gap-4">
+                    <div class="w-8 h-8 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">@num</div>
+                    <div class="text-sm">
+                        <p class="font-semibold text-gray-900"><i class="fa @icon text-blue-500 mr-1"></i>@Html.Raw(title)</p>
+                        <p class="text-gray-500 mt-0.5">@Html.Raw(desc)</p>
+                    </div>
+                </li>
+            }
+        </ol>
+    </div>
+
+    @* ═══════════════════════════════════════════════════════════════════
+       SECTION 3 — Database Information
+       ═══════════════════════════════════════════════════════════════════ *@
+    <div class="card space-y-4">
+        <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">
+            <i class="fa fa-database text-blue-500 mr-2"></i>Database
+        </h2>
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <div>
+                <dt class="text-gray-500 font-medium">Provider</dt>
+                <dd class="mt-0.5">
+                    <span class="badge-gray font-mono">@Model.DbProvider</span>
+                </dd>
+            </div>
+            <div class="sm:col-span-2">
+                <dt class="text-gray-500 font-medium">Connection String</dt>
+                <dd class="mt-0.5 font-mono text-xs text-gray-700 bg-gray-50 px-3 py-2 rounded-lg break-all">
+                    @Model.MaskedConnectionString
+                </dd>
+            </div>
+        </dl>
+        <a href="/Admin/Setup/Database" class="btn-secondary inline-flex">
+            <i class="fa fa-edit mr-2"></i>Change Database Provider
+        </a>
+    </div>
+
+    @* ═══════════════════════════════════════════════════════════════════
+       SECTION 4 — Application Info
+       ═══════════════════════════════════════════════════════════════════ *@
+    <div class="card space-y-4">
+        <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">
+            <i class="fa fa-circle-info text-blue-500 mr-2"></i>Application Info
+        </h2>
+        <dl class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+            <div>
+                <dt class="text-gray-500 font-medium">Version</dt>
+                <dd class="text-gray-900 font-semibold mt-0.5">v@Model.AppVersion</dd>
+            </div>
+            <div>
+                <dt class="text-gray-500 font-medium">Environment</dt>
+                <dd class="mt-0.5">
+                    <span class="@(Model.AppEnvironment == "Production" ? "badge-success" : "badge-warning")">
+                        @Model.AppEnvironment
+                    </span>
+                </dd>
+            </div>
+            <div class="sm:col-span-3">
+                <dt class="text-gray-500 font-medium">Log Files</dt>
+                <dd class="mt-0.5 font-mono text-xs text-gray-700 bg-gray-50 px-3 py-2 rounded-lg">
+                    @Model.LogsPath
+                </dd>
+            </div>
+        </dl>
+    </div>
+
+</div>
+
+@section Scripts {
+<script>
+// ── Auto-load API status on page load ────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', refreshApiStatus);
+
+async function refreshApiStatus() {
+    const row = document.getElementById('apiStatusRow');
+    row.innerHTML = '<i class="fa fa-spinner fa-spin mr-1"></i> Checking…';
+    try {
+        const resp = await fetch('/Admin/Settings/ApiStatus');
+        const d    = await resp.json();
+        const icon = d.isConnected ? 'fa-circle-check text-green-500' : 'fa-times-circle text-red-500';
+        row.innerHTML =
+            `<i class="fa ${icon}"></i>
+             <span class="${d.isConnected ? 'text-green-700' : 'text-red-600'}">${d.message}</span>
+             <span class="text-gray-400 ml-2">${d.lastChecked}</span>`;
+    } catch {
+        row.innerHTML = '<i class="fa fa-times-circle text-red-500"></i> <span class="text-red-600">Could not reach status endpoint.</span>';
+    }
+}
+
+// ── Switch to Live API ────────────────────────────────────────────────────────
+async function switchToLiveApi() {
+    const token = document.getElementById('testToken')?.value?.trim();
+    if (!token) { toastr.error('Please enter a Bearer Token before switching.'); return; }
+
+    const btn    = document.getElementById('switchBtn');
+    const result = document.getElementById('switchResult');
+    btn.disabled  = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i>Validating Token…';
+    result.className = 'text-xs text-gray-500';
+    result.textContent = '';
+    result.classList.remove('hidden');
+
+    try {
+        const csrf = document.querySelector('[name="__RequestVerificationToken"]')?.value ?? '';
+        const resp = await fetch('/Admin/Settings/SwitchToRealApi', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': csrf
+            },
+            body: JSON.stringify({ bearerTokenTest: token })
+        });
+        const data = await resp.json();
+
+        if (data.success) {
+            toastr.success(data.message, 'Success', { timeOut: 5000 });
+            result.className = 'text-xs text-green-600';
+            result.textContent = '✓ ' + data.message;
+            btn.innerHTML = '<i class="fa fa-check mr-2"></i>Switched!';
+            setTimeout(() => location.reload(), 3000);
+        } else {
+            toastr.error(data.message, 'Validation Failed');
+            result.className = 'text-xs text-red-600';
+            result.textContent = '✗ ' + data.message;
+            btn.disabled  = false;
+            btn.innerHTML = '<i class="fa fa-check mr-2"></i>Validate &amp; Switch to Live';
+        }
+    } catch (err) {
+        toastr.error('Request failed: ' + err.message);
+        btn.disabled  = false;
+        btn.innerHTML = '<i class="fa fa-check mr-2"></i>Validate &amp; Switch to Live';
+    }
+}
+
+// ── Switch to Mock API ────────────────────────────────────────────────────────
+async function switchToMockApi() {
+    const csrf = document.querySelector('#mockForm [name="__RequestVerificationToken"]')?.value ?? '';
+    const resp = await fetch('/Admin/Settings/SwitchToMockApi', {
+        method: 'POST',
+        headers: { 'RequestVerificationToken': csrf }
+    });
+    const data = await resp.json();
+    if (data.success) {
+        toastr.success(data.message, 'Switched to Mock');
+        setTimeout(() => location.reload(), 2500);
+    } else {
+        toastr.error(data.message);
+    }
+}
+</script>
+}

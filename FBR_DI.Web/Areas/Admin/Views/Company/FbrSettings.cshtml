@@ -1,0 +1,124 @@
+@model CompanyDetailDto
+@{
+    ViewData["Title"] = "FBR Settings - " + Model.CompanyName;
+}
+
+<div class="max-w-3xl space-y-5">
+    <div class="flex items-center gap-4">
+        <a href="/Admin/Company/Index" class="text-gray-400 hover:text-gray-600">
+            <i class="fa fa-arrow-left"></i>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">FBR Integration Settings</h1>
+            <p class="text-sm text-gray-500 mt-0.5">@Model.CompanyName — NTN: @Model.NTN</p>
+        </div>
+    </div>
+
+    <!-- Integration Status -->
+    <div class="card">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl @(Model.IsIntegrated ? "bg-green-100" : "bg-gray-100") flex items-center justify-center">
+                <i class="fa @(Model.IsIntegrated ? "fa-check-circle text-green-600" : "fa-times-circle text-gray-400") text-xl"></i>
+            </div>
+            <div>
+                <div class="font-semibold text-gray-900">Integration Status</div>
+                <div class="text-sm @(Model.IsIntegrated ? "text-green-600" : "text-gray-400")">
+                    @(Model.IsIntegrated ? "Integrated — Token Configured" : "Not Integrated — Token Required")
+                </div>
+            </div>
+            <div class="ml-auto">
+                <span class="@(Model.SubmissionEnvironment == SubmissionEnvironment.Sandbox ? "badge-warning" : "badge-success")">
+                    @Model.SubmissionEnvironment
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Token -->
+    <div class="card space-y-4">
+        <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">Update FBR Bearer Token</h2>
+        <form asp-action="UpdateFbrToken" asp-route-id="@Model.Id" method="post">
+            @Html.AntiForgeryToken()
+            <div class="space-y-4">
+                <div>
+                    <label class="form-label">Bearer Token</label>
+                    <textarea name="token" rows="3" class="form-input font-mono text-xs"
+                              placeholder="Paste your FBR Bearer Token here..."></textarea>
+                    <p class="text-xs text-gray-400 mt-1">Token is stored securely. Only the last 4 characters are shown.</p>
+                </div>
+                <div>
+                    <label class="form-label">Environment</label>
+                    <select name="environment" class="form-input">
+                        <option value="Sandbox" selected="@(Model.SubmissionEnvironment == SubmissionEnvironment.Sandbox)">Sandbox (Testing)</option>
+                        <option value="Production" selected="@(Model.SubmissionEnvironment == SubmissionEnvironment.Production)">Production (Live)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fa fa-key mr-2"></i>Update Token
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Reference Data Sync -->
+    <div class="card space-y-4">
+        <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">Sync Reference Data</h2>
+        <p class="text-sm text-gray-500">Synchronise lookup data from the FBR API. Requires a valid Bearer Token.</p>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+            @foreach (var type in new[] { "Province", "UOM", "HSCode", "DocType", "TransactionType" })
+            {
+                <button onclick="syncData('@type')"
+                        class="border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                    <i class="fa fa-sync-alt text-blue-500"></i>@type
+                </button>
+            }
+        </div>
+        <button onclick="syncAll()" class="btn-primary w-full">
+            <i class="fa fa-sync-alt mr-2"></i>Sync All Reference Data
+        </button>
+        <div id="syncResult" class="hidden text-sm rounded-lg px-4 py-3"></div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    const companyId = @Model.Id;
+    function syncData(type) {
+        fetch('/Admin/Company/SyncReferenceData', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+            },
+            body: `companyId=${companyId}&referenceType=${type}`
+        })
+        .then(r => r.json())
+        .then(data => {
+            const el = document.getElementById('syncResult');
+            el.className = data.success
+                ? 'text-sm rounded-lg px-4 py-3 bg-green-50 border border-green-200 text-green-800'
+                : 'text-sm rounded-lg px-4 py-3 bg-red-50 border border-red-200 text-red-800';
+            el.textContent = data.message;
+            el.classList.remove('hidden');
+        });
+    }
+
+    function syncAll() {
+        fetch('/Admin/ReferenceData/SyncAll', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+            },
+            body: `companyId=${companyId}`
+        })
+        .then(r => r.json())
+        .then(data => {
+            const el = document.getElementById('syncResult');
+            el.className = 'text-sm rounded-lg px-4 py-3 bg-green-50 border border-green-200 text-green-800';
+            el.textContent = 'All reference data synced successfully.';
+            el.classList.remove('hidden');
+        });
+    }
+</script>
+}

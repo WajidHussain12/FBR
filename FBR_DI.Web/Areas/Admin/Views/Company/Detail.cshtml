@@ -1,0 +1,216 @@
+@model CompanyDetailDto
+@{
+    ViewData["Title"] = "Company Details - " + Model.CompanyName;
+    var validPct = Model.TotalInvoices > 0
+        ? (int)Math.Round((double)Model.SubmittedInvoices / Model.TotalInvoices * 100)
+        : 0;
+}
+
+<div class="space-y-6">
+
+    @* Header *@
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="flex items-center gap-4">
+            <a href="/Admin/Company/Index" class="text-gray-400 hover:text-gray-600">
+                <i class="fa fa-arrow-left text-lg"></i>
+            </a>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">@Model.CompanyName</h1>
+                <p class="text-sm text-gray-500 mt-0.5">NTN: <span class="font-mono font-semibold">@Model.NTN</span></p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+            @if (Model.IsIntegrated)
+            {
+                <span class="badge-success"><i class="fa fa-check-circle mr-1"></i>FBR Integrated</span>
+            }
+            else
+            {
+                <span class="badge-gray"><i class="fa fa-times-circle mr-1"></i>Not Integrated</span>
+            }
+            @if (Model.IsActive)
+            {
+                <span class="badge-success">Active</span>
+            }
+            else
+            {
+                <span class="badge-danger">Inactive</span>
+            }
+        </div>
+    </div>
+
+    @* Stats Cards *@
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div class="card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Total Invoices</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">@Model.TotalInvoices</p>
+                </div>
+                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <i class="fa fa-file-invoice text-blue-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Submitted to FBR</p>
+                    <p class="text-3xl font-bold text-green-600 mt-1">@Model.SubmittedInvoices</p>
+                </div>
+                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                    <i class="fa fa-check-circle text-green-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Submission Rate</p>
+                    <p class="text-3xl font-bold @(validPct >= 80 ? "text-green-600" : validPct >= 50 ? "text-yellow-600" : "text-red-600") mt-1">@validPct%</p>
+                </div>
+                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                    <i class="fa fa-chart-pie text-purple-600 text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-3 w-full bg-gray-100 rounded-full h-1.5">
+                <div class="h-1.5 rounded-full @(validPct >= 80 ? "bg-green-500" : validPct >= 50 ? "bg-yellow-500" : "bg-red-500")"
+                     style="width: @validPct%"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        @* Company Info Card *@
+        <div class="lg:col-span-2 card space-y-4">
+            <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">
+                <i class="fa fa-building text-blue-500 mr-2"></i>Company Information
+            </h2>
+            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
+                <div>
+                    <dt class="text-gray-500 font-medium">Company Name</dt>
+                    <dd class="text-gray-900 font-semibold mt-0.5">@Model.CompanyName</dd>
+                </div>
+                <div>
+                    <dt class="text-gray-500 font-medium">NTN</dt>
+                    <dd class="text-gray-900 font-mono mt-0.5">@Model.NTN</dd>
+                </div>
+                @if (!string.IsNullOrWhiteSpace(Model.CNIC))
+                {
+                    <div>
+                        <dt class="text-gray-500 font-medium">CNIC</dt>
+                        <dd class="text-gray-900 font-mono mt-0.5">@Model.CNIC</dd>
+                    </div>
+                }
+                <div>
+                    <dt class="text-gray-500 font-medium">Province</dt>
+                    <dd class="text-gray-900 mt-0.5">@Model.Province</dd>
+                </div>
+                <div class="sm:col-span-2">
+                    <dt class="text-gray-500 font-medium">Address</dt>
+                    <dd class="text-gray-900 mt-0.5">@Model.Address</dd>
+                </div>
+                @if (!string.IsNullOrWhiteSpace(Model.PhoneNumber))
+                {
+                    <div>
+                        <dt class="text-gray-500 font-medium">Phone Number</dt>
+                        <dd class="text-gray-900 mt-0.5">@Model.PhoneNumber</dd>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.Email))
+                {
+                    <div>
+                        <dt class="text-gray-500 font-medium">Email</dt>
+                        <dd class="mt-0.5"><a href="mailto:@Model.Email" class="text-blue-600 hover:underline">@Model.Email</a></dd>
+                    </div>
+                }
+                <div>
+                    <dt class="text-gray-500 font-medium">Registered On</dt>
+                    <dd class="text-gray-900 mt-0.5">@Model.CreatedAt.ToString("dd MMM yyyy")</dd>
+                </div>
+            </dl>
+        </div>
+
+        @* Side Panel *@
+        <div class="space-y-5">
+
+            @* Business Classification *@
+            <div class="card space-y-3">
+                <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">
+                    <i class="fa fa-tag text-blue-500 mr-2"></i>Classification
+                </h2>
+                <dl class="text-sm space-y-3">
+                    @if (!string.IsNullOrWhiteSpace(Model.BusinessActivity))
+                    {
+                        <div>
+                            <dt class="text-gray-500 font-medium">Business Activity</dt>
+                            <dd class="text-gray-900 mt-0.5">@Model.BusinessActivity</dd>
+                        </div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.Sector))
+                    {
+                        <div>
+                            <dt class="text-gray-500 font-medium">Sector</dt>
+                            <dd class="text-gray-900 mt-0.5">@Model.Sector</dd>
+                        </div>
+                    }
+                    @if (string.IsNullOrWhiteSpace(Model.BusinessActivity) && string.IsNullOrWhiteSpace(Model.Sector))
+                    {
+                        <p class="text-gray-400 text-xs italic">No classification defined.</p>
+                    }
+                </dl>
+            </div>
+
+            @* FBR Integration Status *@
+            <div class="card space-y-3">
+                <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">
+                    <i class="fa fa-shield-halved text-blue-500 mr-2"></i>FBR Integration
+                </h2>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0
+                                @(Model.IsIntegrated ? "bg-green-100" : "bg-gray-100")">
+                        <i class="fa @(Model.IsIntegrated ? "fa-check-circle text-green-600" : "fa-times-circle text-gray-400") text-lg"></i>
+                    </div>
+                    <div class="text-sm">
+                        <div class="font-semibold text-gray-900">
+                            @(Model.IsIntegrated ? "Token Configured" : "Token Not Set")
+                        </div>
+                        <div class="text-gray-500 text-xs mt-0.5">
+                            @(Model.IsIntegrated ? "Ready to submit invoices" : "Configure bearer token to enable submission")
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2 text-sm">
+                    <span class="text-gray-600 font-medium">Environment</span>
+                    <span class="@(Model.SubmissionEnvironment == SubmissionEnvironment.Sandbox ? "badge-warning" : "badge-success")">
+                        @Model.SubmissionEnvironment
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    @* Quick Actions *@
+    <div class="card">
+        <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3 mb-4">
+            <i class="fa fa-bolt text-blue-500 mr-2"></i>Quick Actions
+        </h2>
+        <div class="flex flex-wrap gap-3">
+            <a href="/Admin/Company/Edit/@Model.Id" class="btn-secondary">
+                <i class="fa fa-edit mr-2"></i>Edit Company
+            </a>
+            <a href="/Admin/Company/FbrSettings/@Model.Id" class="btn-secondary">
+                <i class="fa fa-key mr-2"></i>FBR Settings
+            </a>
+            <a href="/Admin/Invoice/Index?companyId=@Model.Id" class="btn-primary">
+                <i class="fa fa-file-invoice mr-2"></i>View Invoices
+            </a>
+            <a href="/Admin/Invoice/Create?companyId=@Model.Id" class="btn-success">
+                <i class="fa fa-plus mr-2"></i>Create Invoice
+            </a>
+        </div>
+    </div>
+
+</div>

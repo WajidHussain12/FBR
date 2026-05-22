@@ -1,0 +1,141 @@
+@model DashboardDto
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="space-y-6">
+    <!-- Page header -->
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+        <p class="text-sm text-gray-500 mt-1">Overview of FBR Digital Invoicing activity</p>
+    </div>
+
+    <!-- Stats cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Invoices This Month</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">@Model.TotalInvoicesThisMonth</p>
+                </div>
+                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <i class="fa fa-file-invoice text-blue-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Valid Invoices</p>
+                    <p class="text-3xl font-bold text-green-600 mt-1">@Model.ValidInvoicesThisMonth</p>
+                </div>
+                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                    <i class="fa fa-check-circle text-green-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Invalid Invoices</p>
+                    <p class="text-3xl font-bold text-red-600 mt-1">@Model.InvalidInvoicesThisMonth</p>
+                </div>
+                <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                    <i class="fa fa-times-circle text-red-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Pending Submission</p>
+                    <p class="text-3xl font-bold text-yellow-600 mt-1">@Model.PendingInvoices</p>
+                </div>
+                <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                    <i class="fa fa-clock text-yellow-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tax Collection Card -->
+    <div class="card bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-blue-100 text-sm font-medium">Total Tax Collected This Month</p>
+                <p class="text-4xl font-bold mt-1">PKR @Model.TotalTaxCollectedThisMonth.ToString("N2")</p>
+            </div>
+            <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+                <i class="fa fa-coins text-white text-2xl"></i>
+            </div>
+        </div>
+        <div class="mt-4 flex gap-6 text-sm text-blue-100">
+            <span><i class="fa fa-building mr-1"></i>@Model.TotalCompanies Companies</span>
+            <span><i class="fa fa-check mr-1"></i>@Model.ActiveCompanies Active</span>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Recent Invoices -->
+        <div class="card">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base font-semibold text-gray-900">Recent Invoices</h2>
+                <a href="/Admin/Invoice/Index" class="text-sm text-blue-600 hover:underline">View all</a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-left text-gray-500 border-b border-gray-100">
+                            <th class="pb-3 font-medium">Buyer</th>
+                            <th class="pb-3 font-medium">Amount</th>
+                            <th class="pb-3 font-medium">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        @foreach (var inv in Model.RecentInvoices)
+                        {
+                            <tr class="hover:bg-gray-50">
+                                <td class="py-3">
+                                    <div class="font-medium text-gray-900 truncate max-w-[160px]">@inv.BuyerBusinessName</div>
+                                    <div class="text-xs text-gray-400">@inv.InvoiceDate.ToString("dd MMM yyyy")</div>
+                                </td>
+                                <td class="py-3 font-medium text-gray-900">@inv.GrandTotal.ToString("N0")</td>
+                                <td class="py-3">
+                                    @{
+                                        var badgeClass = inv.Status switch {
+                                            "Valid" => "badge-success",
+                                            "Invalid" => "badge-danger",
+                                            "Draft" => "badge-gray",
+                                            _ => "badge-warning"
+                                        };
+                                    }
+                                    <span class="@badgeClass">@inv.Status</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Company Stats -->
+        <div class="card">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base font-semibold text-gray-900">Company Statistics</h2>
+                <a href="/Admin/Company/Index" class="text-sm text-blue-600 hover:underline">Manage</a>
+            </div>
+            <div class="space-y-4">
+                @foreach (var stat in Model.CompanyStats.Take(5))
+                {
+                    <div class="flex items-center justify-between">
+                        <div class="min-w-0 flex-1">
+                            <div class="text-sm font-medium text-gray-900 truncate">@stat.CompanyName</div>
+                            <div class="text-xs text-gray-400">@stat.TotalInvoices total · @stat.ValidInvoices valid</div>
+                        </div>
+                        <div class="text-sm font-semibold text-gray-700 ml-4">PKR @stat.TotalTax.ToString("N0")</div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

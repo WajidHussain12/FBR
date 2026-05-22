@@ -1,0 +1,109 @@
+@model CreateCompanyViewModel
+@{
+    ViewData["Title"] = "Create Company";
+}
+
+<div class="max-w-3xl space-y-5">
+    <div class="flex items-center gap-4">
+        <a href="/Admin/Company/Index" class="text-gray-400 hover:text-gray-600">
+            <i class="fa fa-arrow-left"></i>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Create Company</h1>
+            <p class="text-sm text-gray-500 mt-0.5">Register a new company for FBR Digital Invoicing</p>
+        </div>
+    </div>
+
+    <form asp-action="Create" method="post" class="space-y-5">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm"></div>
+
+        <!-- Company Information -->
+        <div class="card space-y-4">
+            <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">Company Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="CompanyName" class="form-label"></label>
+                    <input asp-for="CompanyName" class="form-input" />
+                    <span asp-validation-for="CompanyName" class="text-red-500 text-xs"></span>
+                </div>
+                <div>
+                    <label asp-for="NTN" class="form-label"></label>
+                    <input asp-for="NTN" class="form-input" placeholder="7 or 13 digits" />
+                    <span asp-validation-for="NTN" class="text-red-500 text-xs"></span>
+                </div>
+                <div>
+                    <label asp-for="CNIC" class="form-label"></label>
+                    <input asp-for="CNIC" class="form-input" placeholder="13 digits (optional)" />
+                    <span asp-validation-for="CNIC" class="text-red-500 text-xs"></span>
+                </div>
+                <div>
+                    <label asp-for="Province" class="form-label"></label>
+                    <input asp-for="Province" class="form-input" />
+                    <span asp-validation-for="Province" class="text-red-500 text-xs"></span>
+                </div>
+            </div>
+            <div>
+                <label asp-for="Address" class="form-label"></label>
+                <textarea asp-for="Address" class="form-input" rows="2"></textarea>
+                <span asp-validation-for="Address" class="text-red-500 text-xs"></span>
+            </div>
+        </div>
+
+        <!-- Contact Details -->
+        <div class="card space-y-4">
+            <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">Contact Details</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="PhoneNumber" class="form-label"></label>
+                    <input asp-for="PhoneNumber" class="form-input" />
+                </div>
+                <div>
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" type="email" class="form-input" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Business Classification -->
+        <div class="card space-y-4">
+            <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">Business Classification</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="BusinessActivity" class="form-label"></label>
+                    <input asp-for="BusinessActivity" class="form-input" />
+                </div>
+                <div>
+                    <label asp-for="Sector" class="form-label"></label>
+                    <input asp-for="Sector" class="form-input" />
+                </div>
+            </div>
+        </div>
+
+        <!-- FBR Integration -->
+        <div class="card space-y-4">
+            <h2 class="text-base font-semibold text-gray-900 border-b border-gray-100 pb-3">FBR Integration (Optional)</h2>
+            <div>
+                <label asp-for="FbrBearerToken" class="form-label"></label>
+                <input asp-for="FbrBearerToken" class="form-input font-mono text-xs" placeholder="Paste FBR Bearer Token here" />
+                <p class="text-xs text-gray-400 mt-1">Leave blank to configure later.</p>
+            </div>
+            <div>
+                <label asp-for="SubmissionEnvironment" class="form-label"></label>
+                <select asp-for="SubmissionEnvironment" asp-items="ViewBag.Environments" class="form-input"></select>
+            </div>
+        </div>
+
+        <div class="flex gap-3">
+            <button type="submit" class="btn-primary">
+                <i class="fa fa-save mr-2"></i>Create Company
+            </button>
+            <a href="/Admin/Company/Index" class="btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

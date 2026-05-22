@@ -1,0 +1,51 @@
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Infrastructure.deps.json
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Infrastructure.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Infrastructure.pdb
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.AssemblyInfo.cs
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Infrastructure\obj\Debug\net8.0\refint\FBR_DI.Infrastructure.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.pdb
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Infrastructure\obj\Debug\net8.0\ref\FBR_DI.Infrastructure.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Application.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Domain.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Application.pdb
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Domain.pdb
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.I.73760FC6.Up2Date
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Infrastructure.deps.json
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Infrastructure.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Infrastructure.pdb
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Application.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Domain.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Application.pdb
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Domain.pdb
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.AssemblyInfo.cs
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.I.73760FC6.Up2Date
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\refint\FBR_DI.Infrastructure.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.pdb
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\ref\FBR_DI.Infrastructure.dll
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Infrastructure.deps.json
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Infrastructure.dll
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Infrastructure.pdb
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Application.dll
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Domain.dll
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Application.pdb
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\bin\Debug\net8.0\FBR_DI.Domain.pdb
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.AssemblyInfo.cs
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.I.73760FC6.Up2Date
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.dll
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\refint\FBR_DI.Infrastructure.dll
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\FBR_DI.Infrastructure.pdb
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Infrastructure\obj\Debug\net8.0\ref\FBR_DI.Infrastructure.dll

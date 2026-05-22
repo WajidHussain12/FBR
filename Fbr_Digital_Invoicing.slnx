@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Core/">
+    <Project Path="FBR_DI.Application/FBR_DI.Application.csproj" />
+    <Project Path="FBR_DI.Domain/FBR_DI.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="FBR_DI.Infrastructure/FBR_DI.Infrastructure.csproj" />
+    <Project Path="FBR_DI.Persistence/FBR_DI.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/src/Presentation/">
+    <Project Path="FBR_DI.Web/FBR_DI.Web.csproj" />
+  </Folder>
+</Solution>

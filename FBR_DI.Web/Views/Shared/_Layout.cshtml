@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FBR_DI.Web</title>
+    <link rel="stylesheet" href="~/css/tailwind.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/FBR_DI.Web.styles.css" asp-append-version="true" />
+</head>
+<body class="min-h-screen flex flex-col">
+    <header>
+        <nav class="flex flex-wrap items-center justify-between bg-white border-b border-gray-200 shadow-sm mb-3 px-4 py-2">
+            <div class="w-full flex flex-wrap items-center justify-between">
+                <a class="text-xl font-bold text-gray-800 whitespace-normal break-all" asp-area="" asp-controller="Home" asp-action="Index">FBR_DI.Web</a>
+                <button id="nav-toggle" class="sm:hidden p-2 rounded border border-gray-300 text-gray-600" type="button"
+                        aria-controls="navbarSupportedContent"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <div id="navbarSupportedContent" class="hidden sm:flex w-full sm:w-auto">
+                    <ul class="flex flex-col sm:flex-row sm:gap-4">
+                        <li>
+                            <a class="block text-gray-700 hover:text-gray-900 py-1" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li>
+                            <a class="block text-gray-700 hover:text-gray-900 py-1" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="max-w-7xl mx-auto px-4 w-full flex-grow">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-t border-gray-200 text-gray-500 absolute bottom-0 w-full">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            &copy; 2026 - FBR_DI.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Mobile nav toggle
+        document.getElementById('nav-toggle').addEventListener('click', function () {
+            var menu = document.getElementById('navbarSupportedContent');
+            menu.classList.toggle('hidden');
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

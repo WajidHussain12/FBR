@@ -1,0 +1,116 @@
+@model InvoiceDetailDto
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Invoice @Model.FbrInvoiceNumber - FBR</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 11px; color: #111; margin: 20px; }
+        .header { text-align: center; border-bottom: 2px solid #1d4ed8; padding-bottom: 12px; margin-bottom: 16px; }
+        .header h1 { font-size: 18px; color: #1d4ed8; margin: 0; }
+        .header p { margin: 2px 0; color: #555; }
+        .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        .section-title { font-weight: bold; font-size: 12px; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-bottom: 8px; color: #1d4ed8; }
+        .kv { display: flex; justify-content: space-between; margin: 3px 0; }
+        .kv .k { color: #666; }
+        table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 10px; }
+        th { background: #1d4ed8; color: white; padding: 5px 6px; text-align: left; }
+        td { padding: 4px 6px; border-bottom: 1px solid #eee; }
+        .totals { margin-top: 12px; }
+        .total-row { display: flex; justify-content: space-between; padding: 3px 0; }
+        .grand-total { font-size: 14px; font-weight: bold; border-top: 2px solid #1d4ed8; padding-top: 6px; margin-top: 6px; }
+        .qr-section { display: flex; align-items: center; gap: 16px; margin-top: 16px; border-top: 1px solid #ddd; padding-top: 12px; }
+        @@media print {
+            body { margin: 10px; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="no-print" style="margin-bottom:16px;">
+    <button onclick="window.print()" style="background:#1d4ed8;color:white;border:none;padding:8px 16px;border-radius:4px;cursor:pointer;">
+        Print Invoice
+    </button>
+</div>
+
+<div class="header">
+    <h1>FBR Digital Invoice</h1>
+    <p>@Model.CompanyName</p>
+    @if (!string.IsNullOrEmpty(Model.FbrInvoiceNumber))
+    {
+        <p style="font-weight:bold;font-size:13px;">FBR Invoice No: @Model.FbrInvoiceNumber</p>
+    }
+    <p>Date: @Model.InvoiceDate.ToString("dd MMM yyyy") &nbsp;|&nbsp; Type: @Model.InvoiceType &nbsp;|&nbsp; Status: @Model.Status</p>
+</div>
+
+<div class="grid2">
+    <div>
+        <div class="section-title">Seller</div>
+        <div class="kv"><span class="k">Name:</span><span>@Model.SellerBusinessName</span></div>
+        <div class="kv"><span class="k">NTN/CNIC:</span><span>@Model.SellerNTNCNIC</span></div>
+        <div class="kv"><span class="k">Province:</span><span>@Model.SellerProvince</span></div>
+        <div class="kv"><span class="k">Address:</span><span>@Model.SellerAddress</span></div>
+    </div>
+    <div>
+        <div class="section-title">Buyer</div>
+        <div class="kv"><span class="k">Name:</span><span>@Model.BuyerBusinessName</span></div>
+        @if (!string.IsNullOrEmpty(Model.BuyerNTNCNIC))
+        {
+            <div class="kv"><span class="k">NTN/CNIC:</span><span>@Model.BuyerNTNCNIC</span></div>
+        }
+        <div class="kv"><span class="k">Type:</span><span>@Model.BuyerRegistrationType</span></div>
+        <div class="kv"><span class="k">Province:</span><span>@Model.BuyerProvince</span></div>
+        <div class="kv"><span class="k">Address:</span><span>@Model.BuyerAddress</span></div>
+    </div>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th><th>HS Code</th><th>Description</th><th>Qty</th><th>UoM</th>
+            <th>Rate</th><th>Value Excl ST</th><th>Sales Tax</th><th>Sale Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.ItemSerialNo</td>
+                <td>@item.HsCode</td>
+                <td>@item.ProductDescription</td>
+                <td>@item.Quantity</td>
+                <td>@item.UoM</td>
+                <td>@item.Rate</td>
+                <td>@item.ValueSalesExcludingST.ToString("N2")</td>
+                <td>@item.SalesTaxApplicable.ToString("N2")</td>
+                <td style="font-size:9px;">@item.SaleType</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="totals" style="max-width:300px;margin-left:auto;">
+    <div class="total-row"><span>Value Excl. ST:</span><span>@Model.TotalValueExclST.ToString("N2")</span></div>
+    <div class="total-row"><span>Sales Tax:</span><span>@Model.TotalSalesTax.ToString("N2")</span></div>
+    <div class="total-row"><span>Further Tax:</span><span>@Model.TotalFurtherTax.ToString("N2")</span></div>
+    <div class="total-row"><span>Extra Tax:</span><span>@Model.TotalExtraTax.ToString("N2")</span></div>
+    <div class="total-row"><span>FED Payable:</span><span>@Model.TotalFedPayable.ToString("N2")</span></div>
+    <div class="total-row"><span>Discount:</span><span>-@Model.TotalDiscount.ToString("N2")</span></div>
+    <div class="total-row grand-total"><span>Grand Total (PKR):</span><span>@Model.GrandTotal.ToString("N2")</span></div>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.QrCodeBase64))
+{
+    <div class="qr-section">
+        <img src="data:image/png;base64,@Model.QrCodeBase64" alt="QR Code" style="width:80px;height:80px;" />
+        <div>
+            <div style="font-weight:bold;">FBR Verification QR Code</div>
+            <div style="font-size:10px;color:#555;margin-top:4px;">@Model.FbrInvoiceNumber</div>
+        </div>
+    </div>
+}
+</body>
+</html>

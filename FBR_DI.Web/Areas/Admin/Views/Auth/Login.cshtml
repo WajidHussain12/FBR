@@ -1,0 +1,75 @@
+@model LoginViewModel
+@{
+    Layout = "_AdminLoginLayout";
+    ViewData["Title"] = "Login";
+}
+
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <!-- Header -->
+        <div class="text-center">
+            <div class="mx-auto w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+                <i class="fa fa-file-invoice text-white text-2xl"></i>
+            </div>
+            <h2 class="text-3xl font-bold text-gray-900">FBR Digital Invoicing</h2>
+            <p class="mt-2 text-sm text-gray-500">Sign in to your account</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+            <form asp-action="Login" method="post">
+                <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+                <div asp-validation-summary="All" class="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm"></div>
+
+                <div class="space-y-5">
+                    <div>
+                        <label asp-for="Email" class="form-label">Email Address</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
+                                <i class="fa fa-envelope text-sm"></i>
+                            </span>
+                            <input asp-for="Email" type="email" autocomplete="email"
+                                   class="form-input pl-10" placeholder="admin@fbr-di.com" />
+                        </div>
+                        <span asp-validation-for="Email" class="text-red-500 text-xs mt-1"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Password" class="form-label">Password</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
+                                <i class="fa fa-lock text-sm"></i>
+                            </span>
+                            <input asp-for="Password" type="password" autocomplete="current-password"
+                                   class="form-input pl-10" placeholder="••••••••" />
+                        </div>
+                        <span asp-validation-for="Password" class="text-red-500 text-xs mt-1"></span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input asp-for="RememberMe" type="checkbox"
+                                   class="h-4 w-4 text-blue-600 border-gray-300 rounded" />
+                            <label asp-for="RememberMe" class="ml-2 text-sm text-gray-600">Remember me</label>
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                            class="w-full btn-primary py-3 text-base font-semibold rounded-xl flex items-center justify-center gap-2">
+                        <i class="fa fa-sign-in-alt"></i>
+                        Sign In
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <p class="text-center text-xs text-gray-400">
+            FBR Digital Invoicing System &copy; @DateTime.Now.Year
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

@@ -1,0 +1,55 @@
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Persistence.deps.json
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Persistence.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Persistence.pdb
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.AssemblyInfoInputs.cache
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.AssemblyInfo.cs
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.csproj.CoreCompileInputs.cache
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Persistence\obj\Debug\net8.0\refint\FBR_DI.Persistence.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.pdb
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Persistence\obj\Debug\net8.0\ref\FBR_DI.Persistence.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Application.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Domain.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Application.pdb
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Domain.pdb
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.csproj.AssemblyReference.cache
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.P.47AA0EC8.Up2Date
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Persistence.deps.json
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Persistence.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Persistence.pdb
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Application.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Domain.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Application.pdb
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Domain.pdb
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.csproj.AssemblyReference.cache
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.AssemblyInfoInputs.cache
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.AssemblyInfo.cs
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.csproj.CoreCompileInputs.cache
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.P.47AA0EC8.Up2Date
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\refint\FBR_DI.Persistence.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.pdb
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\ref\FBR_DI.Persistence.dll
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Persistence.runtimeconfig.json
+C:\Users\_SYED\Desktop\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.genruntimeconfig.cache
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Persistence.deps.json
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Persistence.runtimeconfig.json
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Persistence.dll
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Persistence.pdb
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Application.dll
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Domain.dll
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Application.pdb
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\bin\Debug\net8.0\FBR_DI.Domain.pdb
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.csproj.AssemblyReference.cache
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.AssemblyInfoInputs.cache
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.AssemblyInfo.cs
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.csproj.CoreCompileInputs.cache
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.P.47AA0EC8.Up2Date
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.dll
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\refint\FBR_DI.Persistence.dll
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.pdb
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\FBR_DI.Persistence.genruntimeconfig.cache
+C:\Users\Ri Traders\Documents\Transfer Projects\FBR Taxation App\Fbr_Digital_Invoicing_2\FBR_DI.Persistence\obj\Debug\net8.0\ref\FBR_DI.Persistence.dll
