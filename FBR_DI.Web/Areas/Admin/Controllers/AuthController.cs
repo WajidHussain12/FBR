@@ -12,20 +12,26 @@ public class AuthController : Controller
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IConfiguration _configuration;
+    private readonly ILogger<AuthController> _logger;
 
     public AuthController(
         SignInManager<ApplicationUser> signInManager,
-        UserManager<ApplicationUser> userManager)
+        UserManager<ApplicationUser> userManager,
+        IConfiguration configuration,
+        ILogger<AuthController> logger)
     {
         _signInManager = signInManager;
         _userManager = userManager;
+        _configuration = configuration;
+        _logger = logger;
     }
 
     [HttpGet]
     public IActionResult Login(string? returnUrl = null)
     {
         if (_signInManager.IsSignedIn(User))
-            return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+            return RedirectToReturnUrlOrDashboard(returnUrl);
 
         ViewData["ReturnUrl"] = returnUrl;
         return View();
@@ -44,7 +50,7 @@ public class AuthController : Controller
             model.Email, model.Password, model.RememberMe, lockoutOnFailure: true);
 
         if (result.Succeeded)
-            return LocalRedirect(returnUrl ?? "/Admin/Dashboard/Index");
+            return RedirectToReturnUrlOrDashboard(returnUrl);
 
         if (result.IsLockedOut)
         {
@@ -62,7 +68,9 @@ public class AuthController : Controller
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
-        return RedirectToAction("Login");
+        var loginUrl = $"{GetEffectivePathBase()}/Admin/Auth/Login";
+        _logger.LogInformation("[Auth] Logout redirect — FinalRedirectUrl='{FinalRedirectUrl}'", loginUrl);
+        return Redirect(loginUrl);
     }
 
     [HttpGet]
@@ -102,5 +110,64 @@ public class AuthController : Controller
             ModelState.AddModelError(string.Empty, error.Description);
 
         return View(model);
+    }
+
+    private string GetEffectivePathBase()
+    {
+        var requestPathBase = Request.PathBase.HasValue ? Request.PathBase.Value : string.Empty;
+        var configuredPathBase = _configuration["PathBase"] ?? string.Empty;
+
+        var pathBase = !string.IsNullOrWhiteSpace(requestPathBase)
+            ? requestPathBase
+            : configuredPathBase;
+
+        if (string.IsNullOrWhiteSpace(pathBase))
+            return string.Empty;
+
+        pathBase = pathBase.Trim();
+        pathBase = pathBase.StartsWith('/') ? pathBase : "/" + pathBase;
+        return pathBase.TrimEnd('/');
+    }
+
+    private IActionResult RedirectToReturnUrlOrDashboard(string? returnUrl)
+    {
+        var configuredPathBase = _configuration["PathBase"] ?? string.Empty;
+        var pathBase = GetEffectivePathBase();
+        var finalRedirectUrl = BuildReturnUrlOrDashboard(returnUrl, pathBase);
+
+        _logger.LogInformation(
+            "[Auth] Redirect decision — Request.PathBase='{RequestPathBase}' Configured.PathBase='{ConfiguredPathBase}' Effective.PathBase='{EffectivePathBase}' ReturnUrl='{ReturnUrl}' IsAuthenticated={IsAuthenticated} FinalRedirectUrl='{FinalRedirectUrl}'",
+            Request.PathBase.HasValue ? Request.PathBase.Value : string.Empty,
+            configuredPathBase,
+            pathBase,
+            returnUrl,
+            User.Identity?.IsAuthenticated ?? false,
+            finalRedirectUrl);
+
+        return Redirect(finalRedirectUrl);
+    }
+
+    private string BuildReturnUrlOrDashboard(string? returnUrl, string pathBase)
+    {
+        if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+        {
+            if (!string.IsNullOrWhiteSpace(pathBase))
+            {
+                if (returnUrl.StartsWith(pathBase + "/", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(returnUrl, pathBase, StringComparison.OrdinalIgnoreCase))
+                {
+                    return returnUrl;
+                }
+
+                if (returnUrl.StartsWith("/Admin", StringComparison.OrdinalIgnoreCase))
+                {
+                    return pathBase + returnUrl;
+                }
+            }
+
+            return returnUrl;
+        }
+
+        return $"{pathBase}/Admin/Dashboard/Index";
     }
 }
